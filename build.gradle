@@ -1,5 +1,6 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.40'
+    id 'java'
 }
 
 group 'wooodenleg'
@@ -11,10 +12,10 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "com.tmik:TmiK-jvm:0.0.6"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1"
-    implementation "joda-time:joda-time:2.10.2"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.40"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1"
+    compile "com.tmik:TmiK-jvm:0.0.6"
+    compile "joda-time:joda-time:2.10.2"
 }
 
 compileKotlin {
@@ -28,6 +29,12 @@ task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
 
 jar {
-    baseName = 'wooodenbot'
-    version = '1.0'
+    manifest {
+        attributes 'Main-Class': 'MainKt'
+    }
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }

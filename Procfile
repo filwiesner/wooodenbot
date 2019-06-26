@@ -1,1 +1,1 @@
-worker: java -jar build/libs/wooodenbot-1.0.jar
+worker: java -jar build/libs/wooodenbot-0.0.1.jar
