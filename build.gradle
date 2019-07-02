@@ -16,6 +16,10 @@ dependencies {
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1"
     compile "com.tmik:TmiK-jvm:0.0.7"
     compile "joda-time:joda-time:2.10.2"
+
+    // DB
+    compile 'org.litote.kmongo:kmongo:3.10.2'
+    compile 'org.litote.kmongo:kmongo-coroutine:3.10.2'
 }
 
 compileKotlin {
