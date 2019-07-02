@@ -13,7 +13,7 @@ import helpers.Greet
 import kotlinx.coroutines.sync.Mutex
 import sumkat.sumkat
 
-val startChannels = arrayOf("wooodenleg")
+val startChannels = arrayOf("wooodenleg", "sumkat")
 fun main() {
     val token = System.getenv("OAUTH")
 

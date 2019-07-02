@@ -41,7 +41,7 @@ fun Container.Greet(hours: Int = 20, customMessages: Map<String, String> = mapOf
     }
 
     fun seen(message: TextMessage, lastSeen: database.LastSeen) {
-        val diff = ((now - lastSeen.timestamp) / 3600000).toInt() + 21
+        val diff = ((now - lastSeen.timestamp) / 3600000).toInt()
 
         if (diff >= hours) when {
             customMessages.containsKey(message.username) ->
