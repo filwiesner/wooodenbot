@@ -37,7 +37,13 @@ fun ChannelScope.sumkatSocial() {
         }
 
         isJust(":)") {
-            it.reply("/w ${it.username} https://bit.ly/2XlSIIw")
+            it.reply("/w ${it.username} ${smileys.random()}")
         }
     }
 }
+
+val smileys = arrayOf(
+    "https://bit.ly/2XlSIIw",
+    "https://bit.ly/2LA3Tva",
+    "https://bit.ly/2LAIpOO"
+)

@@ -7,6 +7,7 @@ import database.Database
 import database.now
 import helpers.commands
 import helpers.isSubscriber
+import kotlin.random.Random
 
 fun ChannelScope.sumkatCommands() {
 
@@ -76,5 +77,42 @@ fun ChannelScope.sumkatCommands() {
         "hehe" receive {
             reply("Kappa https://www.twitch.tv/sumkat/clip/EnchantingSpineyDogMcaT Kappa")
         }
+
+        "cheerup {username} [index]" receive { parameters ->
+            val username = parameters["username"]!!
+            val index = parameters["index"]?.toIntOrNull() ?: Random.nextInt(0, cheers.size)
+
+            if (index >= cheers.size)
+                reply("The max index is ${cheers.size - 1}")
+            else
+                reply("$username ${cheers[index]} \uD83D\uDC9B TakeNRG [$index]")
+        }
+
+        "feels {username} [index]" receive { parameters ->
+            val username = parameters["username"]!!
+            val index = parameters["index"]?.toIntOrNull() ?: Random.nextInt(0, feels.size)
+
+            if (index >= feels.size)
+                reply("The max index is ${feels.size - 1}")
+            else
+                reply("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
+        }
     }
 }
+
+val cheers = arrayOf(
+    "Here, something to cheer you up GivePLZ https://www.youtube.com/watch?v=HiLWCf2MPHQ",
+    "Oh, you feeling bad? :( Think of your favourite animal sleeping! Isn't it nice?",
+    "Look at this bad boooy GivePLZ https://www.youtube.com/watch?v=c31JT-9i-eI TakeNRG He will cheer you up",
+    "You know what I'm doing? Keeping my fingers crossed for you!",
+    "Roses are red, violets aren't blue, world isn't so bad, 'cause this chat appreciates you!",
+    "Snails are cuuuute! https://youtu.be/vSxITYkF-YA"
+)
+val feels = arrayOf(
+    "Listen to this my friend \uD83D\uDC49 https://soundcloud.com/matejhlozanek/zvir",
+    "Listen to this my friend \uD83D\uDC49 https://www.youtube.com/watch?v=8wE8eOCMu7A",
+    "Listen to this my friend \uD83D\uDC49 https://www.youtube.com/watch?v=wbqrd30vQnU",
+    "Listen to this my friend \uD83D\uDC49 https://www.youtube.com/watch?v=H9c42KyVCw0",
+    "Listen to this my friend \uD83D\uDC49 https://www.youtube.com/watch?v=AuFiBjNTB9o",
+    "Listen to this my friend \uD83D\uDC49 https://www.youtube.com/watch?v=CvFH_6DNRCY"
+)
