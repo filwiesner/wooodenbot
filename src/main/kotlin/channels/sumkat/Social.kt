@@ -35,5 +35,9 @@ fun ChannelScope.sumkatSocial() {
         containing(howAddSong) {
             it.reply("You can add songs with following command: !sr <YT link>")
         }
+
+        isJust(":)") {
+            it.reply("/w ${it.username} https://bit.ly/2XlSIIw")
+        }
     }
 }
