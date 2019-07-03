@@ -24,13 +24,14 @@ object Database {
             )
 
         suspend fun set(channel: String, username: String) {
-            if (get(channel, username) == null)
-                collection.insertOne(LastSeen(username, channel, now))
-            else
-                collection.updateOne(
-                    and(database.LastSeen::channel eq channel, database.LastSeen::username eq username),
-                    setValue(database.LastSeen::timestamp, now)
-                )
+            collection.insertOne(LastSeen(username, channel, now))
+        }
+
+        suspend fun update(channel: String, username: String) {
+            collection.updateOne(
+                and(database.LastSeen::channel eq channel, database.LastSeen::username eq username),
+                setValue(database.LastSeen::timestamp, now)
+            )
         }
     }
 }

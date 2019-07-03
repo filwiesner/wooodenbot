@@ -11,26 +11,27 @@ import database.now
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-val ignoredUser = listOf("streamelements")
+val ignoredUser = listOf("streamelements", "streamlabs", "moobot", "nightbot")
 val greetings = arrayOf("Hello there", "Nice to see you", "Heyoooo", " GivePLZ ", "I am glad to see you here")
 
 fun Container.Greet(hours: Int = 20, customMessages: Map<String, String> = mapOf()) = object : TwitchPlugin {
     override val name = "greet"
 
     init { launch {
-        Database.toString()
+        Database.toString() // To wake the object
 
         onTwitchMessage<TextMessage> { message ->
-            println(!ignoredUser.contains(message.username))
             if (!ignoredUser.contains(message.username)) GlobalScope.launch {
                 try {
                     val seen = LastSeen.get(message.channel, message.username)
-                    println("Seen $seen")
 
-                    if (seen == null) neverSeen(message)
-                    else seen(message, seen)
-
-                    LastSeen.set(message.channel, message.username)
+                    if (seen == null) {
+                        neverSeen(message)
+                        LastSeen.set(message.channel, message.username)
+                    } else {
+                        seen(message, seen)
+                        LastSeen.update(message.channel, message.username)
+                    }
                 } catch (t: Throwable) { t.printStackTrace() }
             }
         }
