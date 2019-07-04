@@ -1,6 +1,9 @@
 package channels.sumkat
 
 import com.ktmi.tmi.client.commands.action
+import com.ktmi.tmi.client.commands.followOnly
+import com.ktmi.tmi.client.commands.subOnly
+import com.ktmi.tmi.client.commands.timeout
 import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
 import commandMark
 import database.Database
@@ -14,7 +17,7 @@ fun ChannelScope.sumkatCommands() {
     commands(commandMark) {
 
         "commands" receive {
-            reply("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe\" CoolStoryBob")
+            reply("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels   \" CoolStoryBob")
         }
 
         "hug [target]" receive { parameters ->
