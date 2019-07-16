@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 val ignoredUser = listOf("streamelements", "streamlabs", "moobot", "nightbot")
 val greetings = arrayOf("Hello there", "Nice to see you", "Heyoooo", " GivePLZ ", "I am glad to see you here")
 
-fun Container.Greet(hours: Int = 20, customMessages: Map<String, String> = mapOf()) = object : TwitchPlugin {
+fun Container.Greet(hours: Int = 48, customMessages: Map<String, String> = mapOf()) = object : TwitchPlugin {
     override val name = "greet"
 
     init { launch {
@@ -42,13 +42,13 @@ fun Container.Greet(hours: Int = 20, customMessages: Map<String, String> = mapOf
     }
 
     fun seen(message: TextMessage, lastSeen: database.LastSeen) {
-        val diff = ((now - lastSeen.timestamp) / 3600000).toInt()
+        val diff = ((now - lastSeen.timestamp) / 86_400_000).toInt()
 
         if (diff >= hours) when {
             customMessages.containsKey(message.username) ->
-                sendMessage(message.channel, "${customMessages[message.username]} , I haven't seen you for some time! ($diff hours)")
+                sendMessage(message.channel, "${customMessages[message.username]} , I haven't seen you for some time! ($diff days)")
             else ->
-                sendMessage(message.channel, "${greetings.random()} ${message.displayName}. I haven't seen you for some time! ($diff hours)")
+                sendMessage(message.channel, "${greetings.random()} ${message.displayName}. I haven't seen you for some time! ($diff days)")
         }
     }
 }
