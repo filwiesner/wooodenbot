@@ -1,6 +1,7 @@
 package helpers
 
 import com.ktmi.tmi.client.commands.sendMessage
+import com.ktmi.tmi.client.events.UserContext
 import com.ktmi.tmi.client.events.onTwitchMessage
 import com.ktmi.tmi.dsl.builder.TwitchDsl
 import com.ktmi.tmi.dsl.builder.TwitchScope
@@ -66,11 +67,11 @@ class CommandScope(
         return result
     }
 
-    fun onReceive(action: suspend TextMessage.(Map<String, String>) -> Unit) =
+    fun onReceive(action: suspend UserContext<TextMessage>.(Map<String, String>) -> Unit) =
         onTwitchMessage<TextMessage> {
             val result = parseInput(it.message)
             if (result != null)
-                it.action(result)
+                UserContext(it, it.username, it.channel).action(result)
         }
 
 
@@ -80,7 +81,7 @@ class CommandScope(
             .apply(block)
 
     @TwitchDsl
-    infix fun String.receive(block: suspend TextMessage.(Map<String, String>) -> Unit) =
+    infix fun String.receive(block: suspend UserContext<TextMessage>.(Map<String, String>) -> Unit) =
         CommandScope("$pattern $this", this@CommandScope, coroutineContext)
             .onReceive(block)
 

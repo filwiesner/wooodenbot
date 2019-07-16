@@ -1,84 +1,81 @@
 package channels.sumkat
 
-import com.ktmi.tmi.client.commands.action
-import com.ktmi.tmi.client.commands.followOnly
-import com.ktmi.tmi.client.commands.subOnly
-import com.ktmi.tmi.client.commands.timeout
-import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
+import com.ktmi.tmi.dsl.builder.TwitchScope
 import commandMark
 import database.Database
 import database.now
 import helpers.commands
+import helpers.displayName
+import helpers.isMod
 import helpers.isSubscriber
 import kotlin.random.Random
 
-fun ChannelScope.sumkatCommands() {
+fun TwitchScope.sumkatCommands() {
 
     commands(commandMark) {
 
         "commands" receive {
-            reply("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels   \" CoolStoryBob")
+            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels   \" CoolStoryBob")
         }
 
         "hug [target]" receive { parameters ->
             val target = parameters["target"] ?: displayName
-            reply("GivePLZ $target TakeNRG")
+            sendMessage("GivePLZ $target TakeNRG")
         }
 
         "ulthug [target]" receive { parameters ->
             if (isSubscriber) {
                 val target = parameters["target"] ?: displayName
-                reply("(･ω･)つ GivePLZ $target TakeNRG ⊂(･ω･)")
-            } else reply("This command is for subscribers only")
+                sendMessage("(･ω･)つ GivePLZ $target TakeNRG ⊂(･ω･)")
+            } else sendMessage("This command is for subscribers only")
         }
 
         "clap [target]" receive { parameters ->
             val target = parameters["target"]
-            reply("${target ?: "This"} deserves my clapping. \uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F ")
+            sendMessage("${target ?: "This"} deserves my clapping. \uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F ")
         }
 
         "slap [target]" receive { parameters ->
             val target = parameters["target"]
-            reply("${target ?: "Hey"}, stop being toxic! \uD83D\uDC4A KAPOW")
+            sendMessage("${target ?: "Hey"}, stop being toxic! \uD83D\uDC4A KAPOW")
         }
 
         "uno [target]" receive { parameters ->
             val target = parameters["target"]
             if (target == null)
-                reply("$displayName uses reverse UNO card")
+                sendMessage("$displayName uses reverse UNO card")
             else
-                reply("@$target $displayName uses reverse UNO card on you")
+                sendMessage("@$target $displayName uses reverse UNO card on you")
         }
 
         "sad [target]" receive { parameters ->
             val target = parameters["target"] ?: displayName
-            reply("DepressoEspresso${target?.capitalize()}")
+            sendMessage("DepressoEspresso${target?.capitalize()}")
         }
 
         "howlong {username}" receive { parameters ->
             val username = parameters.getValue("username")
-            val seen = Database.LastSeen.get(this@sumkatCommands.channel, username)
+            val seen = Database.LastSeen.get(channel, username)
             if (seen != null) {
-                reply("I saw $username ${(now - seen.timestamp) / 3600000} hours ago")
-            } else reply("I've never seen $username in this chat")
+                sendMessage("I saw $username ${(now - seen.timestamp) / 3600000} hours ago")
+            } else sendMessage("I've never seen $username in this chat")
         }
 
         "gn [target]" receive { parameters ->
             val target = parameters["target"] ?: displayName
-            reply("Good night $target GivePLZ \uD83D\uDC9B")
+            sendMessage("Good night $target GivePLZ \uD83D\uDC9B")
         }
 
         "srqueue" receive {
-            reply("You can see the song queue here: https://streamelements.com/sumkat/songrequest")
+            sendMessage("You can see the song queue here: https://streamelements.com/sumkat/songrequest")
         }
 
         "plug" receive {
-            if (isMod)
-            action(this@sumkatCommands.channel, "Listen up! You can see this bitchboy® on youtube as well! \uD83D\uDC49 https://bit.ly/2XKY1FF Looking for some Twitter? Head to https://twitter.com/sumkat_stream")
+            if (isMod) action("Listen up! You can see this bitchboy® on youtube as well! \uD83D\uDC49 https://bit.ly/2XKY1FF Looking for some Twitter? Head to https://twitter.com/sumkat_stream")
         }
 
         "hehe" receive {
-            reply("Kappa https://www.twitch.tv/sumkat/clip/EnchantingSpineyDogMcaT Kappa")
+            sendMessage("Kappa https://www.twitch.tv/sumkat/clip/EnchantingSpineyDogMcaT Kappa")
         }
 
         "cheerup {username} [index]" receive { parameters ->
@@ -86,9 +83,9 @@ fun ChannelScope.sumkatCommands() {
             val index = parameters["index"]?.toIntOrNull() ?: Random.nextInt(0, cheers.size)
 
             if (index >= cheers.size)
-                reply("The max index is ${cheers.size - 1}")
+                sendMessage("The max index is ${cheers.size - 1}")
             else
-                reply("$username ${cheers[index]} \uD83D\uDC9B TakeNRG [$index]")
+                sendMessage("$username ${cheers[index]} \uD83D\uDC9B TakeNRG [$index]")
         }
 
         "feels {username} [index]" receive { parameters ->
@@ -96,9 +93,9 @@ fun ChannelScope.sumkatCommands() {
             val index = parameters["index"]?.toIntOrNull() ?: Random.nextInt(0, feels.size)
 
             if (index >= feels.size)
-                reply("The max index is ${feels.size - 1}")
+                sendMessage("The max index is ${feels.size - 1}")
             else
-                reply("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
+                sendMessage("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
         }
     }
 }

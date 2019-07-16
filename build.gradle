@@ -9,12 +9,13 @@ version '0.0.1'
 repositories {
     mavenCentral()
     maven { url = uri("https://dl.bintray.com/wooodenleg/maven/") }
+//    mavenLocal()
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.40"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1"
-    compile "com.tmik:TmiK-jvm:0.0.7"
+    compile "com.tmik:TmiK-jvm:0.0.8"
     compile "joda-time:joda-time:2.10.2"
 
     // DB
@@ -33,9 +34,7 @@ task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
 
 jar {
-    manifest {
-        attributes 'Main-Class': 'MainKt'
-    }
+    manifest { attributes 'Main-Class': 'MainKt' }
     from {
         configurations.compile.collect {
             it.isDirectory() ? it : zipTree(it)

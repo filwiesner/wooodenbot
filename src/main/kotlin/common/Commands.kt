@@ -12,12 +12,12 @@ fun MainScope.commonCommands() {
         }
 
         "whoareyou" receive {
-            reply("I am bot created by wooodenleg TakeNRG To see available commands write '${commandMark}commands'. " +
+            sendMessage("I am bot created by wooodenleg TakeNRG To see available commands write '${commandMark}commands'. " +
                     "For more info write '${commandMark}details'")
         }
 
         "details" receive {
-            reply("I am written in Kotlin/JVM using TmiK library and ~700 lines of code long CoolCat." +
+            sendMessage("I am written in Kotlin/JVM using TmiK library and ~700 lines of code long CoolCat." +
                     " I run 24/7 on Heroku server and save my data to MongoDB")
         }
 
