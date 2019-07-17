@@ -16,7 +16,7 @@ fun TwitchScope.sumkatCommands() {
     commands(commandMark) {
 
         "commands" receive {
-            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels   \" CoolStoryBob")
+            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels, poll \" CoolStoryBob")
         }
 
         "hug [target]" receive { parameters ->
@@ -101,6 +101,8 @@ fun TwitchScope.sumkatCommands() {
 
         var activePoll: Poll? = null
         "poll" {
+            onReceive { sendMessage("Create poll with '${commandMark}poll create <options>' and stop it with '${commandMark}poll stop'") }
+            
             "create <options>" receive {
                 val options = it.getValue("options").split(" ")
 
@@ -114,10 +116,11 @@ fun TwitchScope.sumkatCommands() {
                     sendMessage("Another poll is already active")
             }
 
-            "vote {option}" receive {
-                if (activePoll != null)
-                    Database.Poll.vote(channel, message.username, it.getValue("option"))
-                else sendMessage("No poll is active right now")
+            "active" receive {
+                if (activePoll == null)
+                    sendMessage("There is no active poll")
+                else
+                    sendMessage("There is active poll by ${activePoll!!.author} with options: ${activePoll!!.options.joinToString { ", " }}")
             }
 
             "stop" receive {
@@ -131,6 +134,12 @@ fun TwitchScope.sumkatCommands() {
                 } else
                     sendMessage("No poll is active right now")
             }
+        }
+
+        "vote {option}" receive {
+            if (activePoll != null)
+                Database.Poll.vote(channel, message.username, it.getValue("option"))
+            else sendMessage("No poll is active right now")
         }
     }
 }
