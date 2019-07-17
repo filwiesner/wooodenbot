@@ -20,7 +20,5 @@ fun MainScope.commonCommands() {
             sendMessage("I am written in Kotlin/JVM using TmiK library and ~700 lines of code long CoolCat." +
                     " I run 24/7 on Heroku server and save my data to MongoDB")
         }
-
-
     }
 }

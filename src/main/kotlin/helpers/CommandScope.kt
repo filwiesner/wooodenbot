@@ -13,6 +13,7 @@ private sealed class PatternPart(val name: String)
 private class PatternPath(name: String) : PatternPart(name)
 private class PatternRequired(name: String) : PatternPart(name)
 private class PatternOptional(name: String) : PatternPart(name)
+private class PatternVararg(name: String) : PatternPart(name)
 
 class CommandScope(
     val pattern: String,
@@ -26,11 +27,14 @@ class CommandScope(
             when ("${part[0]}${part[part.length - 1]}") {
                 "{}" -> PatternRequired(part.substring(1 until (part.length - 1)))
                 "[]" -> PatternOptional(part.substring(1 until (part.length - 1)))
+                "<>" -> PatternVararg(part.substring(1 until (part.length - 1)))
                 else -> PatternPath(part)
             }
         }.also { parsed ->
             if (parsed.filter { it is PatternOptional }.size > 1)
-                throw Exception("Multiple optional path parameters are not allowed")
+                throw PatternParseException("Multiple optional path parameters are not allowed")
+            if (parsed.any { it is PatternVararg } && parsed.last() !is PatternVararg)
+                throw PatternParseException("vararg parameter must be at the end of pattern")
         }
 
     private fun parseInput(input: String): Map<String, String>? {
@@ -39,9 +43,10 @@ class CommandScope(
             .split(' ')
             .filter(String::isNotBlank)
 
-        val required = parsed.filter { it !is PatternOptional }
+        val required = parsed.filter { it !is PatternOptional && it !is PatternVararg }
 
-        if (words.size !in required.size..parsed.size) return null
+        if (parsed.none { it is PatternVararg } && words.size !in required.size..parsed.size) return null
+        else if (parsed.any { it is PatternVararg } && words.size < required.size) return null
 
         val result = mutableMapOf<String, String>()
 
@@ -56,11 +61,13 @@ class CommandScope(
                     ++index
                 }
                 is PatternOptional -> {
-                    if (parsed.size == words.size) {
+                    if ((parsed.size == words.size) || (parsed.last() is PatternVararg && parsed.size < words.size)) {
                         result[part.name] = words[index]
                         ++index
                     }
                 }
+                is PatternVararg ->
+                    result[part.name] = words.subList(index, words.size).joinToString(" ")
             }
         }
 
@@ -84,9 +91,9 @@ class CommandScope(
     infix fun String.receive(block: suspend UserContext<TextMessage>.(Map<String, String>) -> Unit) =
         CommandScope("$pattern $this", this@CommandScope, coroutineContext)
             .onReceive(block)
-
-    fun TextMessage.reply(msg: String) = sendMessage(channel, msg)
 }
+
+class PatternParseException(message: String) : Exception(message)
 
 @TwitchDsl
 inline fun TwitchScope.commands(cmdMark: Char, block: CommandScope.() -> Unit) {

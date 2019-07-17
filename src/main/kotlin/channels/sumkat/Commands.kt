@@ -3,6 +3,7 @@ package channels.sumkat
 import com.ktmi.tmi.dsl.builder.TwitchScope
 import commandMark
 import database.Database
+import database.Poll
 import database.now
 import helpers.commands
 import helpers.displayName
@@ -96,6 +97,40 @@ fun TwitchScope.sumkatCommands() {
                 sendMessage("The max index is ${feels.size - 1}")
             else
                 sendMessage("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
+        }
+
+        var activePoll: Poll? = null
+        "poll" {
+            "create <options>" receive {
+                val options = it.getValue("options").split(" ")
+
+                if (isMod && activePoll == null) {
+                    activePoll = Database.Poll.create(channel, message.username, options)
+                    sendMessage("Poll started! Write '${commandMark}vote {option}' to vote")
+                }
+                else if (!isMod)
+                    sendMessage("Only mods can create polls, sorry")
+                else if (activePoll != null)
+                    sendMessage("Another poll is already active")
+            }
+
+            "vote {option}" receive {
+                if (activePoll != null)
+                    Database.Poll.vote(channel, message.username, it.getValue("option"))
+                else sendMessage("No poll is active right now")
+            }
+
+            "stop" receive {
+                if (activePoll != null) {
+                    val res = Database.Poll.stop(activePoll!!.name) ?: return@receive
+                    val result = res.options.map { option ->
+                        option to res.votes.filter { it.option == option }.size
+                    }
+                    sendMessage("Results: ${result.joinToString { (name, count) -> "$name: $count" }}")
+                    activePoll = null
+                } else
+                    sendMessage("No poll is active right now")
+            }
         }
     }
 }

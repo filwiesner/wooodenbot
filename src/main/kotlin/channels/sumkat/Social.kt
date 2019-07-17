@@ -1,6 +1,7 @@
 package channels.sumkat
 
 import ThrottleOut
+import com.ktmi.tmi.client.events.onBitsBadgeTier
 import com.ktmi.tmi.client.events.onMessage
 import com.ktmi.tmi.client.events.onSubGift
 import com.ktmi.tmi.dsl.builder.GlobalContextScope
@@ -9,18 +10,11 @@ import helpers.textMessage
 
 fun GlobalContextScope.sumkatSocial() {
 
-    container {
-        + ThrottleOut(2000)
-        onSubGift {
-            sendMessage("Olala, you are so generous ${message.displayName}! And welcome ${message.recipientDisplayName}")
-        }
-    }
-
     onMessage { when {
         (!message.hasUwUPermit()) && uwuList.any { text.toLowerCase().contains(it) } ->
             sendMessage("UwU = \uD83E\uDD2E")
 
-        !message.isMeOrRiek() && text.toLowerCase().contains("denpuppy") ->
+        !message.isMe() && text.toLowerCase().contains("denpuppy") ->
             sendMessage("Don't call him that BibleThump His username is wooodenleg")
 
         text == "SLEEP IS FOR THE WEAK!" && message.displayName == "StreamElements" ->
@@ -44,6 +38,10 @@ fun GlobalContextScope.sumkatSocial() {
         isJust(":)") {
             it.reply("/w ${it.username} ${smileys.random()}")
         }
+    }
+
+    onBitsBadgeTier {
+        sendMessage("PogChamp that's ${message.threshold} bits ma dude. Keep it up!")
     }
 }
 

@@ -8,6 +8,8 @@ import org.litote.kmongo.reactivestreams.KMongo
 import org.litote.kmongo.setValue
 
 data class LastSeen(val username: String, val channel: String, val timestamp: Long)
+data class Poll(val name: String, val author: String, val options: List<String>, val votes: MutableList<PollVote>)
+data class PollVote(val author: String, val option: String)
 
 object Database {
     private val dbUri = System.getenv("MONGODB_URI")
@@ -32,6 +34,31 @@ object Database {
                 and(database.LastSeen::channel eq channel, database.LastSeen::username eq username),
                 setValue(database.LastSeen::timestamp, now)
             )
+        }
+    }
+
+    object Poll {
+        private val collection = database.getCollection<database.Poll>()
+
+        suspend fun create(name: String, author: String, options: List<String>): database.Poll? {
+            collection.insertOne(Poll(name, author, options, arrayListOf()))
+            return collection.findOne(database.Poll::name eq name)
+        }
+
+        suspend fun stop(name: String): database.Poll? =
+            collection.findOneAndDelete(database.Poll::name eq name)
+
+        suspend fun vote(pollName: String, author: String, option: String) {
+            val new = collection.findOne(database.Poll::name eq pollName)?.let { poll ->
+                if (poll.options.contains(option))
+                    poll.votes.add(PollVote(author, option))
+                poll.votes.distinctBy { it.author }
+            }
+            if (new != null)
+                collection.updateOne(
+                    database.Poll::name eq pollName,
+                    setValue(database.Poll::votes, new)
+                )
         }
     }
 }
