@@ -69,6 +69,9 @@ object Database {
 
             return true
         }
+
+        suspend fun get(name: String): database.Poll? =
+            collection.findOne(database.Poll::name eq name)
     }
 }
 

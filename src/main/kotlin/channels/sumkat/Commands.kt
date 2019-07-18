@@ -9,6 +9,7 @@ import helpers.commands
 import helpers.displayName
 import helpers.isMod
 import helpers.isSubscriber
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 fun TwitchScope.sumkatCommands() {
@@ -100,6 +101,7 @@ fun TwitchScope.sumkatCommands() {
         }
 
         var activePoll: Poll? = null
+        launch { activePoll = Database.Poll.get("#sumkat") }
         "poll" {
             onReceive { sendMessage("Create poll with '${commandMark}poll create <options>' and stop it with '${commandMark}poll stop'") }
 
@@ -110,7 +112,7 @@ fun TwitchScope.sumkatCommands() {
                     activePoll = Database.Poll.create(channel, message.username, options)
                     sendMessage("Poll started! Write '${commandMark}vote {option}' to vote")
                 }
-                else if (!isMod)
+                else if (!isMod && activePoll == null)
                     sendMessage("Only mods can create polls, sorry")
                 else if (activePoll != null)
                     sendMessage("Another poll is already active")
