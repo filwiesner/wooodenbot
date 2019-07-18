@@ -48,21 +48,26 @@ object Database {
         suspend fun stop(name: String): database.Poll? =
             collection.findOneAndDelete(database.Poll::name eq name)
 
-        suspend fun vote(pollName: String, author: String, option: String) {
+        suspend fun vote(pollName: String, author: String, option: String): Boolean {
             val new = collection.findOne(database.Poll::name eq pollName)?.let { poll ->
                 if (poll.votes.any {it.author == author})
                     poll.votes.removeIf { it.author == author }
 
                 if (poll.options.contains(option))
                     poll.votes.add(PollVote(author, option))
+                else return false
 
                 poll.votes
             }
+
             if (new != null)
                 collection.updateOne(
                     database.Poll::name eq pollName,
                     setValue(database.Poll::votes, new)
                 )
+            else return false
+
+            return true
         }
     }
 }

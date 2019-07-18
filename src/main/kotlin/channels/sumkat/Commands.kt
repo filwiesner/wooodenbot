@@ -138,8 +138,9 @@ fun TwitchScope.sumkatCommands() {
 
         "vote {option}" receive {
             if (activePoll != null) {
-                Database.Poll.vote(channel, message.username, it.getValue("option"))
-                sendMessage("/w ${message.username} Vote ${it.getValue("option")} registered")
+                val success = Database.Poll.vote(channel, message.username, it.getValue("option"))
+                if (success) sendMessage("/w ${message.username} Vote '${it.getValue("option")}' registered")
+                else sendMessage("/w ${message.username} Error while registering vote '${it.getValue("option")}'. Make sure the option is spelled correctly")
             } else sendMessage("No poll is active right now")
         }
     }
