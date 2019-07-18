@@ -100,16 +100,16 @@ fun TwitchScope.sumkatCommands() {
                 sendMessage("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
         }
 
-        var activePoll: Poll? = null
-        launch { activePoll = Database.Poll.get("#sumkat") }
+        suspend fun getActivePoll(name: String) = Database.Poll.get(name)
         "poll" {
             onReceive { sendMessage("Create poll with '${commandMark}poll create <options>' and stop it with '${commandMark}poll stop'") }
 
             "create <options>" receive {
                 val options = it.getValue("options").split(" ")
+                val activePoll = getActivePoll(channel)
 
                 if (isMod && activePoll == null) {
-                    activePoll = Database.Poll.create(channel, message.username, options)
+                    Database.Poll.create(channel, message.username, options)
                     sendMessage("Poll started! Write '${commandMark}vote {option}' to vote")
                 }
                 else if (!isMod && activePoll == null)
@@ -119,26 +119,28 @@ fun TwitchScope.sumkatCommands() {
             }
 
             "active" receive {
+                val activePoll = getActivePoll(channel)
                 if (activePoll == null)
                     sendMessage("There is no active poll")
                 else
-                    sendMessage("There is active poll by ${activePoll!!.author} with options: ${activePoll!!.options.joinToString(", ")}")
+                    sendMessage("There is active poll by ${activePoll.author} with options: ${activePoll.options.joinToString(", ")}")
             }
 
             "stop" receive {
+                val activePoll = getActivePoll(channel)
                 if (activePoll != null) {
-                    val res = Database.Poll.stop(activePoll!!.name) ?: return@receive
+                    val res = Database.Poll.stop(activePoll.name) ?: return@receive
                     val result = res.options.map { option ->
                         option to res.votes.filter { it.option == option }.size
                     }
                     sendMessage("Results: ${result.joinToString { (name, count) -> "$name: $count" }}")
-                    activePoll = null
                 } else
                     sendMessage("No poll is active right now")
             }
         }
 
         "vote {option}" receive {
+            val activePoll = getActivePoll(channel)
             if (activePoll != null) {
                 val success = Database.Poll.vote(channel, message.username, it.getValue("option"))
                 if (success) sendMessage("/w ${message.username} Vote '${it.getValue("option")}' registered")
