@@ -102,7 +102,7 @@ fun TwitchScope.sumkatCommands() {
         var activePoll: Poll? = null
         "poll" {
             onReceive { sendMessage("Create poll with '${commandMark}poll create <options>' and stop it with '${commandMark}poll stop'") }
-            
+
             "create <options>" receive {
                 val options = it.getValue("options").split(" ")
 
@@ -120,7 +120,7 @@ fun TwitchScope.sumkatCommands() {
                 if (activePoll == null)
                     sendMessage("There is no active poll")
                 else
-                    sendMessage("There is active poll by ${activePoll!!.author} with options: ${activePoll!!.options.joinToString { ", " }}")
+                    sendMessage("There is active poll by ${activePoll!!.author} with options: ${activePoll!!.options.joinToString(", ")}")
             }
 
             "stop" receive {
@@ -137,9 +137,10 @@ fun TwitchScope.sumkatCommands() {
         }
 
         "vote {option}" receive {
-            if (activePoll != null)
+            if (activePoll != null) {
                 Database.Poll.vote(channel, message.username, it.getValue("option"))
-            else sendMessage("No poll is active right now")
+                sendMessage("/w ${message.username} Vote ${it.getValue("option")} registered")
+            } else sendMessage("No poll is active right now")
         }
     }
 }

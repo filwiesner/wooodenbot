@@ -50,9 +50,13 @@ object Database {
 
         suspend fun vote(pollName: String, author: String, option: String) {
             val new = collection.findOne(database.Poll::name eq pollName)?.let { poll ->
+                if (poll.votes.any {it.author == author})
+                    poll.votes.removeIf { it.author == author }
+
                 if (poll.options.contains(option))
                     poll.votes.add(PollVote(author, option))
-                poll.votes.distinctBy { it.author }
+
+                poll.votes
             }
             if (new != null)
                 collection.updateOne(
