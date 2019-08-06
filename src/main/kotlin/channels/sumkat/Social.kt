@@ -1,11 +1,8 @@
 package channels.sumkat
 
-import ThrottleOut
 import com.ktmi.tmi.client.events.onBitsBadgeTier
 import com.ktmi.tmi.client.events.onMessage
-import com.ktmi.tmi.client.events.onSubGift
 import com.ktmi.tmi.dsl.builder.GlobalContextScope
-import com.ktmi.tmi.dsl.plugins.container
 import helpers.textMessage
 
 fun GlobalContextScope.sumkatSocial() {

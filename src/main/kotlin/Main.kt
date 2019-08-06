@@ -9,9 +9,10 @@ import com.ktmi.tmi.dsl.builder.scopes.channel
 import com.ktmi.tmi.dsl.builder.tmi
 import com.ktmi.tmi.dsl.plugins.Reconnect
 import common.commonLogic
+import database.Database
 
-val startChannels = arrayOf("wooodenleg", "sumkat")
 fun main() {
+    Database.toString() // To wake the DB object
     val token = System.getenv("OAUTH")
 
     tmi(token) {
@@ -25,15 +26,18 @@ fun main() {
         channel("#wooodenleg") { wooodenleg() }
 
 
-        joinOnFirstConnect(startChannels)
+        joinOnFirstConnect()
     }
 }
 
-fun MainScope.joinOnFirstConnect(channels: Array<String>) {
+fun MainScope.joinOnFirstConnect() {
     var first = true
 
     onConnected {
+        val channels = Database.Channels.get()
+
         if (first) {
+            join("wooodenleg")
             for (channel in channels)
                 join(channel)
 

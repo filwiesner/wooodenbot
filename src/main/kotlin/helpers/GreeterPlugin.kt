@@ -5,23 +5,25 @@ import com.ktmi.tmi.client.events.onTwitchMessage
 import com.ktmi.tmi.dsl.plugins.Container
 import com.ktmi.tmi.dsl.plugins.TwitchPlugin
 import com.ktmi.tmi.messages.TextMessage
-import database.Database
 import database.Database.LastSeen
 import database.now
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-val ignoredUser = listOf("streamelements", "streamlabs", "moobot", "nightbot")
-val greetings = arrayOf("Hello there", "Nice to see you", "Heyoooo", " GivePLZ ", "I am glad to see you here")
+val defIgnoredUser = arrayOf("streamelements", "streamlabs", "moobot", "nightbot")
+val defGreetings = arrayOf("Hello there", "Nice to see you", "Heyoooo", " GivePLZ ", "I am glad to see you here")
 
-fun Container.Greet(hours: Int = 48, customMessages: Map<String, String> = mapOf()) = object : TwitchPlugin {
+fun Container.Greet(
+    hours: Int = 48,
+    customMessages: Map<String, String> = mapOf(),
+    greetings: Array<String> = defGreetings,
+    ignored: Array<String> = defIgnoredUser
+) = object : TwitchPlugin {
     override val name = "greet"
 
     init { launch {
-        Database.toString() // To wake the object
-
         onTwitchMessage<TextMessage> { message ->
-            if (!ignoredUser.contains(message.username)) GlobalScope.launch {
+            if (!ignored.contains(message.username)) GlobalScope.launch {
                 try {
                     val seen = LastSeen.get(message.channel, message.username)
 
@@ -41,7 +43,7 @@ fun Container.Greet(hours: Int = 48, customMessages: Map<String, String> = mapOf
         sendMessage(message.channel, "I've never seen you before ${message.displayName} TakeNRG Welcome!")
     }
 
-    fun seen(message: TextMessage, lastSeen: database.LastSeen) {
+    fun seen(message: TextMessage, lastSeen: database.LastSeenEntry) {
         val diff = ((now - lastSeen.timestamp) / 3_600_000).toInt()
 
         if (diff >= hours) when {

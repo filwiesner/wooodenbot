@@ -3,13 +3,11 @@ package channels.sumkat
 import com.ktmi.tmi.dsl.builder.TwitchScope
 import commandMark
 import database.Database
-import database.Poll
 import database.now
 import helpers.commands
 import helpers.displayName
 import helpers.isMod
 import helpers.isSubscriber
-import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 fun TwitchScope.sumkatCommands() {
