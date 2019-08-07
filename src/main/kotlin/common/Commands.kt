@@ -12,7 +12,7 @@ import helpers.isMod
 private val lastMessages = mutableMapOf<String, String>()
 
 fun MainScope.commonCommands() {
-    onMessage { lastMessages["$channel|$username"] = text }
+    onMessage { lastMessages["$channel|${message.username}"] = text }
 
     commands(commandMark) {
         "hello" receive {
@@ -53,7 +53,7 @@ fun MainScope.commonCommands() {
                 val user = parameters.getValue("user").toLowerCase()
                 val name = parameters.getValue("name")
 
-                val quote = lastMessages["$channel|$name"]
+                val quote = lastMessages["$channel|$user"]
 
                 if (quote == null)
                     sendMessage("I can't see any messages from $user, sorry \uD83D\uDE14")
