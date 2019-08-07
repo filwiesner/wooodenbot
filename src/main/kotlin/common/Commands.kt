@@ -8,11 +8,16 @@ import database.Database
 import database.now
 import helpers.commands
 import helpers.isMod
+import helpers.isSubscriber
+import kotlinx.coroutines.delay
 
 private val lastMessages = mutableMapOf<String, String>()
 
 fun MainScope.commonCommands() {
-    onMessage { lastMessages["$channel|${message.username}"] = text }
+    onMessage {
+        delay(1)
+        lastMessages["$channel|${message.username}"] = text
+    }
 
     commands(commandMark) {
         "hello" receive {
@@ -45,24 +50,29 @@ fun MainScope.commonCommands() {
 
         "archive" {
             onReceive { sendMessage(
-                "[Sub only] Archive message with '${commandMark}archive save {username} {name}'. (The 'name' is name of the quote)" +
-                        "Show quote with '${commandMark}archive show {username} [name]"
+                "[Sub only] Archive message with '${commandMark}archive save {username} {name}'. (The 'name' is name of the quote) " +
+                        "Show quote with '${commandMark}archive show {username} [name]'. " +
+                        "Show all users quotes with '${commandMark}archive list {user}'."
             ) }
 
             "save {user} {name}" receive { parameters ->
-                val user = parameters.getValue("user").toLowerCase()
-                val name = parameters.getValue("name")
-
-                val quote = lastMessages["$channel|$user"]
-
-                if (quote == null)
-                    sendMessage("I can't see any messages from $user, sorry \uD83D\uDE14")
+                if (!isSubscriber)
+                    sendMessage("This command is for subscribers only, sorry")
                 else {
-                    val result = Database.Quotes.create(channel, user, now, quote, name, message.username)
-                    if (result) {
-                        sendMessage("Quote saved CorgiDerp")
-                        lastMessages.remove("$channel|$name")
-                    } else sendMessage("It seems that $user already has quote named $name")
+                    val user = parameters.getValue("user").toLowerCase()
+                    val name = parameters.getValue("name")
+
+                    val quote = lastMessages["$channel|$user"]
+
+                    if (quote == null)
+                        sendMessage("I can't see any messages from $user, sorry \uD83D\uDE14")
+                    else {
+                        val result = Database.Quotes.create(channel, user, now, quote, name, message.username)
+                        if (result) {
+                            sendMessage("Quote saved CorgiDerp")
+                            lastMessages.remove("$channel|$name")
+                        } else sendMessage("It seems that $user already has quote named $name")
+                    }
                 }
             }
 
