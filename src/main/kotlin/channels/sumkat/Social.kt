@@ -2,10 +2,11 @@ package channels.sumkat
 
 import com.ktmi.tmi.client.events.onBitsBadgeTier
 import com.ktmi.tmi.client.events.onMessage
+import com.ktmi.tmi.dsl.builder.ChannelContextScope
 import com.ktmi.tmi.dsl.builder.GlobalContextScope
 import helpers.textMessage
 
-fun GlobalContextScope.sumkatSocial() {
+fun ChannelContextScope.sumkatSocial() {
 
     onMessage { when {
         (!message.hasUwUPermit()) && uwuList.any { text.toLowerCase().contains(it) } ->
@@ -34,6 +35,10 @@ fun GlobalContextScope.sumkatSocial() {
 
         isJust(":)") {
             it.reply("/w ${it.username} ${smileys.random()}")
+        }
+
+        containing("thank", "you", "wooodenbot") {
+            it.reply("No problem")
         }
     }
 

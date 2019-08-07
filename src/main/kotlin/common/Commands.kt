@@ -1,6 +1,7 @@
 package common
 
 import com.ktmi.tmi.client.commands.action
+import com.ktmi.tmi.client.events.onMessage
 import com.ktmi.tmi.dsl.builder.MainScope
 import commandMark
 import database.Database
@@ -8,7 +9,11 @@ import database.now
 import helpers.commands
 import helpers.isMod
 
+private val lastMessages = mutableMapOf<String, String>()
+
 fun MainScope.commonCommands() {
+    onMessage { lastMessages["$channel|$username"] = text }
+
     commands(commandMark) {
         "hello" receive {
             action(channel, "MrDestructoid Beep Boop")
@@ -27,16 +32,68 @@ fun MainScope.commonCommands() {
         "howlong {username}" receive { parameters ->
             val username = parameters.getValue("username")
             val seen = Database.LastSeen.get(channel, username)
-            if (seen != null) {
-                sendMessage("I saw $username ${(now - seen.timestamp) / 3600000} hours ago")
-            } else sendMessage("I've never seen $username in this chat")
+
+            sendMessage(
+                if (seen != null)
+                    when (val diffHrs = (now - seen.timestamp) / 3600000) {
+                        in 0..47 -> "I saw $username $diffHrs hours ago"
+                        else -> "I saw $username ${(diffHrs / 24).toInt()} days ago"
+                    }
+                else "I've never seen $username in this chat"
+            )
+        }
+
+        "archive" {
+            onReceive { sendMessage(
+                "[Sub only] Archive message with '${commandMark}archive save {username} {name}'. (The 'name' is name of the quote)" +
+                        "Show quote with '${commandMark}archive show {username} [name]"
+            ) }
+
+            "save {user} {name}" receive { parameters ->
+                val user = parameters.getValue("user").toLowerCase()
+                val name = parameters.getValue("name")
+
+                val quote = lastMessages["$channel|$name"]
+
+                if (quote == null)
+                    sendMessage("I can't see any messages from $user, sorry \uD83D\uDE14")
+                else {
+                    val result = Database.Quotes.create(channel, user, now, quote, name, message.username)
+                    if (result) {
+                        sendMessage("Quote saved CorgiDerp")
+                        lastMessages.remove("$channel|$name")
+                    } else sendMessage("It seems that $user already has quote named $name")
+                }
+            }
+
+            "show {user} [name]" receive { parameters ->
+                val user = parameters.getValue("user").toLowerCase()
+                val name = parameters["name"]
+
+                sendMessage(
+                    if (name != null) {
+                        Database.Quotes.get(channel, user, name)?.toString()
+                            ?: "I could not find $name by $user"
+                    } else Database.Quotes.quoteList(channel, user).random().toString()
+                )
+            }
+
+            "list {user}" receive { parameters ->
+                val user = parameters.getValue("user").toLowerCase()
+                val list = Database.Quotes.quoteList(channel, user)
+                if (list.isEmpty())
+                    sendMessage("Either user $user does not exist or he does not have any quotes saved")
+                else sendMessage("/w ${message.username} ${list.map {
+                    "${it.name} - \"${it.quote}\""
+                }}")
+            }
         }
 
         suspend fun getActivePoll(name: String) = Database.Poll.get(name)
         "poll" {
             onReceive { sendMessage(
                 "Create poll with '${commandMark}poll create <options>' and stop it with '${commandMark}poll stop'. " +
-                        "See active poll with '${commandMark}poll active. " +
+                        "See active poll with '${commandMark}poll active'. " +
                         "If there is an active poll, you can vote for one of available options with '${commandMark}vote [option]'"
             ) }
 

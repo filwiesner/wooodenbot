@@ -50,9 +50,9 @@ fun Container.Greet(
             val days: Int = diff / 24
             when {
                 customMessages.containsKey(message.username) ->
-                    sendMessage(message.channel, "${customMessages[message.username]} , I haven't seen you for some time! ($days days)")
+                    sendMessage(message.channel, "${customMessages[message.username]} , I haven't seen you for $days days!")
                 else ->
-                    sendMessage(message.channel, "${greetings.random()} ${message.displayName}. I haven't seen you for some time! ($days days)")
+                    sendMessage(message.channel, "${greetings.random()} ${message.displayName}. I haven't seen you for $days days!")
             }
         }
     }

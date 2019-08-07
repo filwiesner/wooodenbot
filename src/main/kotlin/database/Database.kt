@@ -12,6 +12,9 @@ data class LastSeenEntry(val username: String, val channel: String, val timestam
 data class PollEntry(val name: String, val author: String, val options: List<String>, val votes: MutableList<PollVoteEntry>)
 data class PollVoteEntry(val author: String, val option: String)
 data class ChannelEntry(val channelName: String)
+data class QuoteEntry(val channel: String, val username: String, val timestamp: Long, val quote: String, val name: String, val author: String) {
+    override fun toString() = "\"$quote\" - $username, ${DateTime(timestamp).year}"
+}
 
 object Database {
     private val dbUri = System.getenv("MONGODB_URI")
@@ -56,6 +59,43 @@ object Database {
         }
     }
 
+    object Quotes {
+        private val collection = database.getCollection<QuoteEntry>()
+
+        suspend fun create(channel: String, username: String, timestamp: Long, quote: String, name: String, author: String): Boolean {
+            val nameExists = collection.findOne(and(
+                QuoteEntry::channel eq channel,
+                QuoteEntry::username eq username,
+                QuoteEntry:: name eq name
+            )) != null
+            if (nameExists) return false
+
+
+            collection.insertOne(QuoteEntry(channel, username, timestamp, quote, name, author))
+            return true
+        }
+
+        suspend fun get(channel: String, username: String, name: String) =
+            collection.findOne(and(
+                QuoteEntry::channel eq channel,
+                QuoteEntry::username eq username,
+                QuoteEntry:: name eq name
+            ))
+
+        suspend fun quoteList(channel: String, username: String) =
+            collection.find(and(
+                QuoteEntry::channel eq channel,
+                QuoteEntry::username eq username
+            )).toList()
+
+        suspend fun delete(channel: String, username: String, name: String) =
+            collection.deleteOne(and(
+                QuoteEntry::channel eq channel,
+                QuoteEntry::username eq username,
+                QuoteEntry:: name eq name
+            )).deletedCount > 0
+    }
+
     object Poll {
         private val collection = database.getCollection<PollEntry>()
 
@@ -69,7 +109,7 @@ object Database {
 
         suspend fun vote(pollName: String, author: String, option: String): Boolean {
             val new = collection.findOne(PollEntry::name eq pollName)?.let { poll ->
-                if (poll.votes.any {it.author == author})
+                if (poll.votes.any { it.author == author } )
                     poll.votes.removeIf { it.author == author }
 
                 if (poll.options.contains(option))

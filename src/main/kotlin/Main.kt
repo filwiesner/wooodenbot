@@ -10,6 +10,7 @@ import com.ktmi.tmi.dsl.builder.tmi
 import com.ktmi.tmi.dsl.plugins.Reconnect
 import common.commonLogic
 import database.Database
+import helpers.Greet
 
 fun main() {
     Database.toString() // To wake the DB object
@@ -17,6 +18,7 @@ fun main() {
 
     tmi(token) {
         + Reconnect()
+        + Greet(customMessages = knownUsers)
 
         onRoomState { println("Joined $channel") }
         onConnectionState { println(it) }
