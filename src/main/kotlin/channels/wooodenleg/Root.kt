@@ -5,6 +5,7 @@ import com.ktmi.tmi.client.commands.leave
 import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
 import com.ktmi.tmi.dsl.builder.scopes.broadcaster
 import com.ktmi.tmi.messages.asChannelName
+import com.ktmi.tmi.messages.channelAsUsername
 import commandMark
 import database.Database
 import helpers.commands
@@ -17,12 +18,14 @@ fun ChannelScope.wooodenleg() {
                 val channel = it.getValue("channel").asChannelName
                 Database.Channels.add(channel)
                 join(channel)
+                sendMessage("Joined channel ${channel.channelAsUsername}")
             }
 
             "leave {channel}" receive {
                 val channel = it.getValue("channel").asChannelName
                 Database.Channels.remove(channel)
                 leave(channel)
+                sendMessage("Left channel ${channel.channelAsUsername}")
             }
 
         }

@@ -29,8 +29,9 @@ object Database {
             collection.insertOne(ChannelEntry(name))
         }
 
-        suspend fun remove(name: String) {
-            collection.deleteOne(ChannelEntry::channelName eq name)
+        suspend fun remove(name: String): Boolean {
+            val res = collection.deleteOne(ChannelEntry::channelName eq name)
+            return res.deletedCount > 0
         }
     }
 

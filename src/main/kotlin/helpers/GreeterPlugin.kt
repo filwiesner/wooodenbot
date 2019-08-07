@@ -46,11 +46,14 @@ fun Container.Greet(
     fun seen(message: TextMessage, lastSeen: database.LastSeenEntry) {
         val diff = ((now - lastSeen.timestamp) / 3_600_000).toInt()
 
-        if (diff >= hours) when {
-            customMessages.containsKey(message.username) ->
-                sendMessage(message.channel, "${customMessages[message.username]} , I haven't seen you for some time! ($diff days)")
-            else ->
-                sendMessage(message.channel, "${greetings.random()} ${message.displayName}. I haven't seen you for some time! ($diff days)")
+        if (diff >= hours) {
+            val days: Int = diff / 24
+            when {
+                customMessages.containsKey(message.username) ->
+                    sendMessage(message.channel, "${customMessages[message.username]} , I haven't seen you for some time! ($days days)")
+                else ->
+                    sendMessage(message.channel, "${greetings.random()} ${message.displayName}. I haven't seen you for some time! ($days days)")
+            }
         }
     }
 }
