@@ -1,8 +1,11 @@
 package common
 
 import com.ktmi.tmi.client.commands.action
+import com.ktmi.tmi.client.events.UserContext
 import com.ktmi.tmi.client.events.onMessage
 import com.ktmi.tmi.dsl.builder.MainScope
+import com.ktmi.tmi.dsl.builder.UserContextScope
+import com.ktmi.tmi.messages.TwitchMessage
 import commandMark
 import database.Database
 import database.now
@@ -12,6 +15,13 @@ import helpers.isSubscriber
 import kotlinx.coroutines.delay
 
 private val lastMessages = mutableMapOf<String, String>()
+
+private val <T: TwitchMessage> UserContext<T>.isBroadcasterOrMod: Boolean get() = message
+    .rawMessage
+    .tags.let {
+    it.containsKey("broadcaster") ||
+            it.containsKey("moderator")
+}
 
 fun MainScope.commonCommands() {
     onMessage {
@@ -111,11 +121,11 @@ fun MainScope.commonCommands() {
                 val options = it.getValue("options").split(" ")
                 val activePoll = getActivePoll(channel)
 
-                if (isMod && activePoll == null) {
+                if (isBroadcasterOrMod && activePoll == null) {
                     Database.Poll.create(channel, message.username, options)
                     sendMessage("Poll started! Write '${commandMark}vote {option}' to vote")
                 }
-                else if (!isMod && activePoll == null)
+                else if (!isBroadcasterOrMod && activePoll == null)
                     sendMessage("Only mods can create polls, sorry")
                 else if (activePoll != null)
                     sendMessage("Another poll is already active")

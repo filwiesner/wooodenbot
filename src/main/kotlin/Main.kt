@@ -1,3 +1,5 @@
+import channels.kaito.kaito
+import channels.kaito.kaitoCommands
 import channels.sumkat.sumkat
 import channels.wooodenleg.wooodenleg
 import com.ktmi.tmi.client.commands.join
@@ -26,7 +28,7 @@ fun main() {
         commonLogic()
         channel("#sumkat") { sumkat() }
         channel("#wooodenleg") { wooodenleg() }
-
+        channel("#pkmntrainerkaito") { kaito() }
 
         joinOnFirstConnect()
     }

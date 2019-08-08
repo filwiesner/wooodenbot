@@ -1,5 +1,6 @@
 package channels.sumkat
 
+import clapCommand
 import com.ktmi.tmi.dsl.builder.TwitchScope
 import commandMark
 import database.Database
@@ -8,19 +9,19 @@ import helpers.commands
 import helpers.displayName
 import helpers.isMod
 import helpers.isSubscriber
+import hugCommand
+import unoCommand
 import kotlin.random.Random
 
 fun TwitchScope.sumkatCommands() {
 
     commands(commandMark) {
+        hugCommand()
+        clapCommand()
+        unoCommand()
 
         "commands" receive {
             sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels, poll \" CoolStoryBob")
-        }
-
-        "hug [target]" receive { parameters ->
-            val target = parameters["target"] ?: displayName
-            sendMessage("GivePLZ $target TakeNRG")
         }
 
         "ulthug [target]" receive { parameters ->
@@ -30,22 +31,9 @@ fun TwitchScope.sumkatCommands() {
             } else sendMessage("This command is for subscribers only")
         }
 
-        "clap [target]" receive { parameters ->
-            val target = parameters["target"]
-            sendMessage("${target ?: "This"} deserves my clapping. \uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F\uD83D\uDC4F ")
-        }
-
         "slap [target]" receive { parameters ->
             val target = parameters["target"]
             sendMessage("${target ?: "Hey"}, stop being toxic! \uD83D\uDC4A KAPOW")
-        }
-
-        "uno [target]" receive { parameters ->
-            val target = parameters["target"]
-            if (target == null)
-                sendMessage("$displayName uses reverse UNO card")
-            else
-                sendMessage("@$target $displayName uses reverse UNO card on you")
         }
 
         "sad [target]" receive { parameters ->
