@@ -2,6 +2,7 @@ package channels.sumkat
 
 import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
 import com.ktmi.tmi.messages.TextMessage
+import com.ktmi.tmi.messages.isMod
 
 // hug clap slap uno
 fun ChannelScope.sumkat() {
