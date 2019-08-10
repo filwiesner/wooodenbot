@@ -64,7 +64,12 @@ class CommandScope(
                 if (part.name != words[index]) return null
                 else ++index
             is PatternChoice -> {
-                if (part.name.split(',').contains(words[index]))
+                if (part.name
+                        .split(',')
+                        .filter { it.isNotBlank() }
+                        .map { it.trim() }
+                        .contains(words[index])
+                )
                     index++
                 else return null
             }

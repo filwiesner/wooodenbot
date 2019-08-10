@@ -40,8 +40,8 @@ fun MainScope.commonCommands() {
                     "You can see my code here \uD83D\uDC49 https://github.com/wooodenleg/wooodenbot")
         }
 
-        "howlong {username}" receive { parameters ->
-            val username = parameters.getValue("username")
+        "|howlong,hl| {username}" receive { parameters ->
+            val username = parameters.getValue("username").toLowerCase()
             val seen = Database.LastSeen.get(channel, username)
 
             sendMessage(
@@ -54,19 +54,19 @@ fun MainScope.commonCommands() {
             )
         }
 
-        "archive" {
+        "|archive,ar|" {
             onReceive { sendMessage(
                 "[Sub only] Archive message with '${commandMark}archive save {username} {name}'. (The 'name' is name of the quote) " +
                         "Show quote with '${commandMark}archive show {username} [name]'. " +
                         "Show all users quotes with '${commandMark}archive list {user}'."
             ) }
 
-            "save {user} {name}" receive { parameters ->
+            "|save,sa| {user} {name}" receive { parameters ->
                 if (!isSubscriber)
                     sendMessage("This command is for subscribers only, sorry")
                 else {
                     val user = parameters.getValue("user").toLowerCase()
-                    val name = parameters.getValue("name")
+                    val name = parameters.getValue("name").toLowerCase()
 
                     val quote = lastMessages["$channel|$user"]
 
@@ -84,7 +84,7 @@ fun MainScope.commonCommands() {
 
             "show {user} [name]" receive { parameters ->
                 val user = parameters.getValue("user").toLowerCase()
-                val name = parameters["name"]
+                val name = parameters["name"]?.toLowerCase()
 
                 sendMessage(
                     if (name != null) {
