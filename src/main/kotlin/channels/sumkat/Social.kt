@@ -3,7 +3,6 @@ package channels.sumkat
 import com.ktmi.tmi.client.events.onBitsBadgeTier
 import com.ktmi.tmi.client.events.onMessage
 import com.ktmi.tmi.dsl.builder.ChannelContextScope
-import com.ktmi.tmi.dsl.builder.GlobalContextScope
 import helpers.textMessage
 
 fun ChannelContextScope.sumkatSocial() {

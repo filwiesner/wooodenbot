@@ -1,10 +1,11 @@
 package common
 
 import ThrottleOut
-import com.ktmi.tmi.dsl.builder.MainScope
-import com.ktmi.tmi.dsl.plugins.container
+import com.ktmi.tmi.dsl.builder.container
+import com.ktmi.tmi.dsl.builder.scopes.MainScope
 import commandMark
 import helpers.textMessage
+
 
 fun MainScope.commonSocial() {
     

@@ -3,8 +3,6 @@ package channels.sumkat
 import clapCommand
 import com.ktmi.tmi.dsl.builder.TwitchScope
 import commandMark
-import database.Database
-import database.now
 import helpers.commands
 import helpers.displayName
 import helpers.isMod

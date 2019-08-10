@@ -1,17 +1,13 @@
 package common
 
 import com.ktmi.tmi.client.commands.action
-import com.ktmi.tmi.client.events.UserContext
 import com.ktmi.tmi.client.events.onMessage
-import com.ktmi.tmi.dsl.builder.MainScope
-import com.ktmi.tmi.dsl.builder.UserContextScope
+import com.ktmi.tmi.dsl.builder.scopes.MainScope
 import com.ktmi.tmi.messages.TextMessage
-import com.ktmi.tmi.messages.TwitchMessage
 import commandMark
 import database.Database
 import database.now
 import helpers.commands
-import helpers.isMod
 import helpers.isSubscriber
 import kotlinx.coroutines.delay
 
@@ -40,8 +36,9 @@ fun MainScope.commonCommands() {
         }
 
         "details" receive {
-            sendMessage("I am written in Kotlin/JVM using TmiK library and ~750 lines of code long CoolCat." +
-                    " I run 24/7 on Heroku server and save my data to MongoDB")
+            sendMessage("I am written in Kotlin/JVM using TmiK library and ~900 lines of code long CoolCat." +
+                    " I run 24/7 on Heroku server and save my data to MongoDB CoolStoryBob " +
+                    "You can see my code here \uD83D\uDC49 https://github.com/wooodenleg/wooodenbot")
         }
 
         "howlong {username}" receive { parameters ->
@@ -103,9 +100,11 @@ fun MainScope.commonCommands() {
                 val list = Database.Quotes.quoteList(channel, user)
                 if (list.isEmpty())
                     sendMessage("Either user $user does not exist or he does not have any quotes saved")
-                else sendMessage("/w ${message.username} ${list.map {
-                    "${it.name} - \"${it.quote}\""
-                }}")
+                else whisper(
+                    list.map {
+                        "${it.name} - \"${it.quote}\""
+                    }.joinToString { " | " }
+                )
             }
         }
 
@@ -156,8 +155,8 @@ fun MainScope.commonCommands() {
             val activePoll = getActivePoll(channel)
             if (activePoll != null) {
                 val success = Database.Poll.vote(channel, message.username, it.getValue("option"))
-                if (success) sendMessage("/w ${message.username} Vote '${it.getValue("option")}' registered")
-                else sendMessage("/w ${message.username} Error while registering vote '${it.getValue("option")}'. Make sure the option is spelled correctly")
+                if (success) whisper("Vote '${it.getValue("option")}' registered")
+                else whisper("Error while registering vote '${it.getValue("option")}'. Make sure the option is spelled correctly")
             } else sendMessage("No poll is active right now")
         }
     }

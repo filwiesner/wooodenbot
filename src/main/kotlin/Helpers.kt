@@ -1,4 +1,4 @@
-import com.ktmi.tmi.dsl.plugins.Container
+import com.ktmi.tmi.dsl.builder.Container
 import com.ktmi.tmi.dsl.plugins.TwitchPlugin
 import org.joda.time.DateTime
 

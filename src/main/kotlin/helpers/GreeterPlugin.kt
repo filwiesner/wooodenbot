@@ -2,10 +2,10 @@ package helpers
 
 import com.ktmi.tmi.client.commands.sendMessage
 import com.ktmi.tmi.client.events.onTwitchMessage
-import com.ktmi.tmi.dsl.plugins.Container
+import com.ktmi.tmi.dsl.builder.Container
 import com.ktmi.tmi.dsl.plugins.TwitchPlugin
 import com.ktmi.tmi.messages.TextMessage
-import database.Database.LastSeen
+import database.Database
 import database.now
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,14 +25,14 @@ fun Container.Greet(
         onTwitchMessage<TextMessage> { message ->
             if (!ignored.contains(message.username)) GlobalScope.launch {
                 try {
-                    val seen = LastSeen.get(message.channel, message.username)
+                    val seen = Database.LastSeen.get(message.channel, message.username)
 
                     if (seen == null) {
                         neverSeen(message)
-                        LastSeen.set(message.channel, message.username)
+                        Database.LastSeen.set(message.channel, message.username)
                     } else {
                         seen(message, seen)
-                        LastSeen.update(message.channel, message.username)
+                        Database.LastSeen.update(message.channel, message.username)
                     }
                 } catch (t: Throwable) { t.printStackTrace() }
             }
