@@ -1,9 +1,9 @@
 package helpers
 
-import com.ktmi.tmi.client.commands.sendMessage
-import com.ktmi.tmi.client.events.onTwitchMessage
+import com.ktmi.tmi.commands.sendMessage
 import com.ktmi.tmi.dsl.builder.TwitchDsl
 import com.ktmi.tmi.dsl.builder.TwitchScope
+import com.ktmi.tmi.events.onTwitchMessage
 import com.ktmi.tmi.messages.TextMessage
 import kotlin.coroutines.CoroutineContext
 

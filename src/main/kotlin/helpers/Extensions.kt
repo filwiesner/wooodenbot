@@ -1,6 +1,6 @@
 package helpers
 
-import com.ktmi.tmi.client.events.UserContext
+import com.ktmi.tmi.events.UserContext
 import com.ktmi.tmi.messages.TextMessage
 
 val UserContext<TextMessage>.isSubscriber get() = message.badges?.containsKey("subscriber") == true

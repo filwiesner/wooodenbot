@@ -1,8 +1,7 @@
 package common
 
-import com.ktmi.tmi.client.commands.action
-import com.ktmi.tmi.client.events.onMessage
 import com.ktmi.tmi.dsl.builder.scopes.MainScope
+import com.ktmi.tmi.events.onMessage
 import com.ktmi.tmi.messages.TextMessage
 import commandMark
 import database.Database
@@ -27,7 +26,7 @@ fun MainScope.commonCommands() {
 
     commands(commandMark) {
         "hello" receive {
-            action(channel, "MrDestructoid Beep Boop")
+            action("MrDestructoid Beep Boop")
         }
 
         "whoareyou" receive {
@@ -101,9 +100,9 @@ fun MainScope.commonCommands() {
                 if (list.isEmpty())
                     sendMessage("Either user $user does not exist or he does not have any quotes saved")
                 else whisper(
-                    list.map {
+                    list.joinToString(" | ") {
                         "${it.name} - \"${it.quote}\""
-                    }.joinToString { " | " }
+                    }
                 )
             }
         }

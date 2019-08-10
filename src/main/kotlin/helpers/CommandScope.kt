@@ -1,11 +1,15 @@
 package helpers
 
-import com.ktmi.tmi.client.events.UserContext
-import com.ktmi.tmi.client.events.onTwitchMessage
 import com.ktmi.tmi.dsl.builder.TwitchDsl
 import com.ktmi.tmi.dsl.builder.TwitchScope
-import com.ktmi.tmi.dsl.builder.scopes.filters.filter
+import com.ktmi.tmi.dsl.builder.scopes.filters.filterUserState
+import com.ktmi.tmi.events.UserContext
 import com.ktmi.tmi.messages.TextMessage
+import com.ktmi.tmi.messages.isBroadcaster
+import com.ktmi.tmi.messages.isMod
+import com.ktmi.tmi.messages.isSubscriber
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 private sealed class PatternPart(val name: String)
@@ -16,6 +20,7 @@ private class PatternVararg(name: String) : PatternPart(name)
 private class PatternChoice(choices: String) : PatternPart(choices)
 
 class CommandScope(
+    val cmdMark: Char,
     val pattern: String,
     parent: TwitchScope?,
     context: CoroutineContext
@@ -80,22 +85,24 @@ class CommandScope(
         return result
     }
 
-    fun onReceive(action: suspend UserContext<TextMessage>.(Map<String, String>) -> Unit) =
-        onTwitchMessage<TextMessage> {
-            val result = parseInput(it.message)
-            if (result != null)
-                UserContext(it, it.username, it.channel).action(result)
-        }
-
+    fun onReceive(action: suspend UserContext<TextMessage>.(Map<String, String>) -> Unit) {
+        launch { getTwitchFlow().collect {
+            if (it is TextMessage && it.message[0] == cmdMark) {
+                val result = parseInput(it.message)
+                if (result != null)
+                    UserContext(it, it.username, it.channel).action(result)
+            }
+        } }
+    }
 
     @TwitchDsl
     inline operator fun String.invoke(block: CommandScope.() -> Unit) =
-        CommandScope("$pattern $this", this@CommandScope, coroutineContext)
+        CommandScope(cmdMark, "$pattern $this", this@CommandScope, coroutineContext)
             .apply(block)
 
     @TwitchDsl
     infix fun String.receive(block: suspend UserContext<TextMessage>.(Map<String, String>) -> Unit) =
-        CommandScope("$pattern $this", this@CommandScope, coroutineContext)
+        CommandScope(cmdMark, "$pattern $this", this@CommandScope, coroutineContext)
             .onReceive(block)
 }
 
@@ -103,9 +110,23 @@ class PatternParseException(message: String) : Exception(message)
 
 @TwitchDsl
 inline fun TwitchScope.commands(cmdMark: Char, block: CommandScope.() -> Unit) {
-    filter {
-        withPredicate { it is TextMessage && it.message[0] == cmdMark}
-        CommandScope("", this, coroutineContext)
+    CommandScope(cmdMark, "", this, coroutineContext)
+        .apply(block)
+}
+
+@TwitchDsl
+inline fun CommandScope.subscribers(block: CommandScope.() -> Unit) {
+    filterUserState {
+        withPredicate { it.isSubscriber }
+        CommandScope(this@subscribers.cmdMark, this@subscribers.pattern, this, coroutineContext)
+            .apply(block)
+    }
+}
+@TwitchDsl
+inline fun CommandScope.moderators(includingBroadcaster: Boolean = true, block: CommandScope.() -> Unit) {
+    filterUserState {
+        withPredicate { it.isMod || (includingBroadcaster && it.isBroadcaster)}
+        CommandScope(this@moderators.cmdMark, this@moderators.pattern, this, coroutineContext)
             .apply(block)
     }
 }

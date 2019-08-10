@@ -1,8 +1,8 @@
 package channels.sumkat
 
-import com.ktmi.tmi.client.events.onBitsBadgeTier
-import com.ktmi.tmi.client.events.onMessage
 import com.ktmi.tmi.dsl.builder.ChannelContextScope
+import com.ktmi.tmi.events.onBitsBadgeTier
+import com.ktmi.tmi.events.onMessage
 import helpers.textMessage
 
 fun ChannelContextScope.sumkatSocial() {
