@@ -44,7 +44,7 @@ fun TwitchScope.sumkatCommands() {
             sendMessage("Good night $target GivePLZ \uD83D\uDC9B")
         }
 
-        "srqueue" receive {
+        "|srqueue, sq|" receive {
             sendMessage("You can see the song queue here: https://streamelements.com/sumkat/songrequest")
         }
 

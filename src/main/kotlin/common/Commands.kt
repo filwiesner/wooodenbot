@@ -115,7 +115,7 @@ fun MainScope.commonCommands() {
                         "If there is an active poll, you can vote for one of available options with '${commandMark}vote [option]'"
             ) }
 
-            "create <options>" receive {
+            "|create,c| <options>" receive {
                 val options = it.getValue("options").split(" ")
                 val activePoll = getActivePoll(channel)
 
@@ -129,7 +129,7 @@ fun MainScope.commonCommands() {
                     sendMessage("Another poll is already active")
             }
 
-            "active" receive {
+            "|active,a|" receive {
                 val activePoll = getActivePoll(channel)
                 if (activePoll == null)
                     sendMessage("There is no active poll")
@@ -137,7 +137,7 @@ fun MainScope.commonCommands() {
                     sendMessage("There is active poll by ${activePoll.author} with options: ${activePoll.options.joinToString(", ")}")
             }
 
-            "stop" receive {
+            "|stop,s|" receive {
                 val activePoll = getActivePoll(channel)
                 if (activePoll != null) {
                     val res = Database.Poll.stop(activePoll.name) ?: return@receive

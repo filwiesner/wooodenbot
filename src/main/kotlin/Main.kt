@@ -27,8 +27,8 @@ fun main() {
         onConnectionState { println(it) }
 
         commonLogic()
-        channel("sumkat") { sumkat() }
         channel("wooodenleg") { wooodenleg() }
+        channel("sumkat") { sumkat() }
         channel("pkmntrainerkaito") { kaito() }
 
         onTwitchMessage<UndefinedMessage> {
