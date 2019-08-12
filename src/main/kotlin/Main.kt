@@ -6,10 +6,7 @@ import com.ktmi.tmi.dsl.builder.scopes.MainScope
 import com.ktmi.tmi.dsl.builder.scopes.channel
 import com.ktmi.tmi.dsl.builder.scopes.tmi
 import com.ktmi.tmi.dsl.plugins.Reconnect
-import com.ktmi.tmi.events.onConnected
-import com.ktmi.tmi.events.onConnectionState
-import com.ktmi.tmi.events.onRoomState
-import com.ktmi.tmi.events.onTwitchMessage
+import com.ktmi.tmi.events.*
 import com.ktmi.tmi.messages.UndefinedMessage
 import common.commonLogic
 import database.Database
@@ -25,6 +22,8 @@ fun main() {
 
         onRoomState { println("Joined $channel") }
         onConnectionState { println(it) }
+
+        onMessage { Database.Message.onMessage(message) }
 
         commonLogic()
         channel("wooodenleg") { wooodenleg() }

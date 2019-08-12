@@ -1,5 +1,6 @@
 package database
 
+import com.ktmi.tmi.messages.TextMessage
 import org.joda.time.DateTime
 import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.coroutine
@@ -15,6 +16,7 @@ data class ChannelEntry(val channelName: String)
 data class QuoteEntry(val channel: String, val username: String, val timestamp: Long, val quote: String, val name: String, val author: String) {
     override fun toString() = "\"$quote\" - $username, ${DateTime(timestamp).year}"
 }
+data class MessageEntry(val channel: String, val date: Long, val username: String, val message: String)
 
 object Database {
     private val dbUri = System.getenv("MONGODB_URI")
@@ -132,6 +134,16 @@ object Database {
         suspend fun get(name: String): PollEntry? =
             collection.findOne(PollEntry::name eq name)
 
+    }
+
+    object Message {
+        private val collection = database.getCollection<MessageEntry>()
+
+        suspend fun onMessage(message: TextMessage) {
+            collection.insertOne(
+                MessageEntry(message.channel, now, message.username, message.message)
+            )
+        }
     }
 }
 
