@@ -1,10 +1,12 @@
 package database
 
 import com.ktmi.tmi.messages.TextMessage
+import com.ktmi.tmi.messages.asChannelName
 import org.joda.time.DateTime
 import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
+import org.litote.kmongo.gt
 import org.litote.kmongo.reactivestreams.KMongo
 import org.litote.kmongo.setValue
 
@@ -144,6 +146,19 @@ object Database {
                 MessageEntry(message.channel, now, message.username, message.message)
             )
         }
+
+        suspend fun messagesToday(channel: String, hours: Int) =
+            collection.countDocuments(and(
+                MessageEntry::channel eq channel.asChannelName,
+                MessageEntry::date gt (now - (hours * 3_600_000))
+            ))
+
+        suspend fun messagesTodayByUser(channel: String, username: String, hours: Int) =
+            collection.countDocuments(and(
+                MessageEntry::channel eq channel.asChannelName,
+                MessageEntry::username eq username.toLowerCase(),
+                MessageEntry::date gt (now - (hours * 3_600_000))
+            ))
     }
 }
 

@@ -35,7 +35,7 @@ fun MainScope.commonCommands() {
         }
 
         "details" receive {
-            sendMessage("I am written in Kotlin/JVM using TmiK library and ~900 lines of code long CoolCat." +
+            sendMessage("I am written in Kotlin/JVM using TmiK library and ~1000 lines of code long CoolCat." +
                     " I run 24/7 on Heroku server and save my data to MongoDB CoolStoryBob " +
                     "You can see my code here \uD83D\uDC49 https://github.com/wooodenleg/wooodenbot")
         }
@@ -51,6 +51,18 @@ fun MainScope.commonCommands() {
                         else -> "I saw $username ${(diffHrs / 24).toInt()} days ago"
                     }
                 else "I've never seen $username in this chat"
+            )
+        }
+
+        "howmany,hm [username]" receive { paramaters ->
+            val username = paramaters["username"]
+            val hours = 24
+
+            sendMessage(
+                if (username != null)
+                    "$username wrote ${Database.Message.messagesTodayByUser(channel, message.username, hours)} messages in last $hours hours"
+                else
+                    "${Database.Message.messagesToday(channel, hours)} messages were written in this channel in last $hours hours"
             )
         }
 
