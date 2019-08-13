@@ -54,13 +54,13 @@ fun MainScope.commonCommands() {
             )
         }
 
-        "howmany,hm [username]" receive { paramaters ->
+        "|howmany,hm| [username]" receive { paramaters ->
             val username = paramaters["username"]
             val hours = 24
 
             sendMessage(
                 if (username != null)
-                    "$username wrote ${Database.Message.messagesTodayByUser(channel, message.username, hours)} messages in last $hours hours"
+                    "$username has written ${Database.Message.messagesTodayByUser(channel, message.username, hours)} messages in last $hours hours"
                 else
                     "${Database.Message.messagesToday(channel, hours)} messages were written in this channel in last $hours hours"
             )
