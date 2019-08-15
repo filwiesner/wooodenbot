@@ -17,7 +17,11 @@ private class PatternPath(name: String) : PatternPart(name)
 private class PatternRequired(name: String) : PatternPart(name)
 private class PatternOptional(name: String) : PatternPart(name)
 private class PatternVararg(name: String) : PatternPart(name)
-private class PatternChoice(choices: String) : PatternPart(choices)
+private class PatternChoice(choices: String) : PatternPart(choices) {
+    val choices = choices
+        .split(',')
+        .filter { it.isNotBlank() }
+}
 
 class CommandScope(
     val cmdMark: Char,
@@ -25,7 +29,7 @@ class CommandScope(
     parent: TwitchScope?,
     context: CoroutineContext
 ) : TwitchScope(parent, context) {
-    private val parsed = pattern
+    private val parsedPattern = pattern
         .split(' ')
         .filter(String::isNotBlank)
         .map { part ->
@@ -37,13 +41,22 @@ class CommandScope(
                 else -> PatternPath(part)
             }
         }.also { parsed ->
-            if (parsed.filter { it is PatternOptional }.size > 1)
-                throw PatternParseException("Multiple optional path parameters are not allowed")
+            if (parsed
+                    .map { if (it is PatternChoice) it.choices else listOf(it.name)}
+                    .flatten()
+                    .let { it.distinct().size != it.size }
+            ) throw PatternParseException("Pattern names must be unique")
             if (parsed.any { it is PatternVararg } && parsed.last() !is PatternVararg)
                 throw PatternParseException("Vararg parameter must be at the end of pattern")
             if (parsed.any { part -> part is PatternChoice && part.name.count { it == ',' } == 0 })
                 throw PatternParseException("Choice pattern must have at least 2 options (separated with comma)")
         }
+
+    private val isVararg = parsedPattern.lastOrNull() is PatternVararg
+    private val min = parsedPattern.count { it !is PatternOptional && it !is PatternVararg }
+    private val max = if (isVararg) Int.MAX_VALUE else parsedPattern.size
+    private val path = parsedPattern
+        .filter { it is PatternPath || it is PatternChoice }
 
     private fun parseInput(input: String): Map<String, String>? {
         val words = input
@@ -51,40 +64,68 @@ class CommandScope(
             .split(' ')
             .filter(String::isNotBlank)
 
-        val required = parsed.filter { it !is PatternOptional && it !is PatternVararg }
+        if (words.size !in min..max)
+            return null
+        if (!path.all { if (it is PatternChoice) it.choices.any { choice -> input.contains(choice)  } else input.contains(it.name) })
+            return null
 
-        if (parsed.none { it is PatternVararg } && words.size !in required.size..parsed.size) return null
-        else if (parsed.any { it is PatternVararg } && words.size < required.size) return null
-
+        var wordIndex = 0
         val result = mutableMapOf<String, String>()
+        parsing@ for (patternIndex in 0 until parsedPattern.size) {
+            if (wordIndex >= words.size) break@parsing
 
-        var index = 0
-        for (part in parsed) when (part) {
-            is PatternPath ->
-                if (part.name != words[index]) return null
-                else ++index
-            is PatternChoice -> {
-                if (part.name
-                        .split(',')
-                        .filter { it.isNotBlank() }
-                        .map { it.trim() }
-                        .contains(words[index])
-                )
-                    index++
-                else return null
-            }
-            is PatternRequired -> {
-                result[part.name] = words[index]
-                ++index
-            }
-            is PatternOptional -> {
-                if ((parsed.size == words.size) || (parsed.last() is PatternVararg && parsed.size < words.size)) {
-                    result[part.name] = words[index]
-                    ++index
+            val part = parsedPattern[patternIndex]
+            val word = words[wordIndex]
+
+            // Check path
+            when (part) {
+                is PatternPath ->
+                    if (word == part.name) {
+                        ++wordIndex
+                        continue@parsing
+                    } else return null
+                is PatternChoice ->
+                    if (part.choices.contains(word)) {
+                        ++wordIndex
+                        continue@parsing
+                    } else return null
+                is PatternRequired -> {
+                    result[part.name] = word
+                    ++wordIndex
+                    continue@parsing
                 }
+                is PatternVararg ->
+                    result[part.name] = words
+                        .subList(wordIndex, words.size)
+                        .joinToString(" ")
             }
-            is PatternVararg ->
-                result[part.name] = words.subList(index, words.size).joinToString(" ")
+
+            fun canUseOptional(): Boolean {
+                val nextPathIndex = parsedPattern
+                    .subList(patternIndex, parsedPattern.size)
+                    .indexOfFirst { it is PatternPath || it is PatternChoice }
+                    .let { if (it == -1) parsedPattern.size else it + patternIndex }
+
+                val nextPathWordIndex =
+                    if (nextPathIndex == parsedPattern.size) words.size
+                    else parsedPattern[nextPathIndex].let { pattern ->
+                        words.indexOfFirst {
+                            if (pattern is PatternChoice) pattern.choices.contains(it)
+                            else pattern.name == it
+                        }
+                    }
+
+                val wordsLeft = nextPathWordIndex - wordIndex
+                val requiredWords = parsedPattern.subList(patternIndex, nextPathIndex)
+                    .count { it is PatternRequired }
+
+                return wordsLeft > requiredWords
+            }
+
+            if (part is PatternOptional && canUseOptional()) {
+                result[part.name] = word
+                ++wordIndex
+            }
         }
 
         return result
