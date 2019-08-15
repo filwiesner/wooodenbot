@@ -54,9 +54,18 @@ fun MainScope.commonCommands() {
             )
         }
 
-        "|howmany,hm| [username]" receive { paramaters ->
-            val username = paramaters["username"]
-            val hours = 24
+        "|howmany,hm| [hours] [username]" receive { paramaters ->
+            var username = paramaters["username"]
+            val hours: Int = paramaters["hours"].let {
+                if (it != null) {
+                    if (it.toIntOrNull() != null) it.toIntOrNull()
+                    else {
+                        username = it
+                        null
+                    }
+                } else it
+            } ?: 24
+
 
             sendMessage(
                 if (username != null)
