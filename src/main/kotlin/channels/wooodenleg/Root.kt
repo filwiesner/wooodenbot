@@ -11,7 +11,9 @@ import database.Database
 import helpers.commands
 
 fun ChannelScope.wooodenleg() {
+
     broadcaster {
+
         commands(commandMark) {
 
             "join {channel}" receive {
@@ -27,7 +29,6 @@ fun ChannelScope.wooodenleg() {
                 leave(channel)
                 sendMessage("Left channel ${channel.channelAsUsername}")
             }
-
         }
     }
 }

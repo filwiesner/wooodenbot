@@ -66,7 +66,6 @@ fun MainScope.commonCommands() {
                 } else it
             } ?: 24
 
-
             sendMessage(
                 if (username != null)
                     "$username has written ${Database.Message.messagesTodayByUser(channel, message.username, hours)} messages in last $hours hours"
