@@ -47,7 +47,7 @@ fun ChannelContextScope.sumkatSocial() {
 }
 
 val smileys = arrayOf(
-    "https://bit.ly/2XlSIIw",
+    "https://bit.ly/2KLFd1S",
     "https://bit.ly/2LA3Tva",
     "https://bit.ly/2LAIpOO"
 )
