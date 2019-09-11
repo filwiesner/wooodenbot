@@ -68,9 +68,9 @@ fun MainScope.commonCommands() {
 
             sendMessage(
                 if (username != null)
-                    "$username has written ${Database.Message.messagesTodayByUser(channel, message.username, hours)} messages in last $hours hours"
+                    "$username has written ${Database.Message.messageCountByUser(channel, message.username, hours)} messages in last $hours hours"
                 else
-                    "${Database.Message.messagesToday(channel, hours)} messages were written in this channel in last $hours hours"
+                    "${Database.Message.messageCount(channel, hours)} messages were written in this channel in last $hours hours"
             )
         }
 
@@ -102,7 +102,7 @@ fun MainScope.commonCommands() {
                 }
             }
 
-            "show {user} [name]" receive { parameters ->
+            "|show,sh| {user} [name]" receive { parameters ->
                 val user = parameters.getValue("user").toLowerCase()
                 val name = parameters["name"]?.toLowerCase()
 
@@ -177,6 +177,23 @@ fun MainScope.commonCommands() {
                 if (success) whisper("Vote '${it.getValue("option")}' registered")
                 else whisper("Error while registering vote '${it.getValue("option")}'. Make sure the option is spelled correctly")
             } else sendMessage("No poll is active right now")
+        }
+
+        "words [hours]" receive {
+            val hours = it["hours"]?.toIntOrNull() ?: 24
+            val words = Database.Message
+                .messagesIn(channel, hours)
+                .flatMap { it.message.split(' ') }
+
+            val top3 = words
+                .distinct()
+                .associateWith { word -> words.count { it == word } }
+                .entries
+                .sortedByDescending { it.value }
+                .take(3)
+                .joinToString { "'${it.key}' : ${it.key}" }
+
+            sendMessage("Top three words in past $hours hours are: $top3")
         }
     }
 }

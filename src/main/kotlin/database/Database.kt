@@ -147,18 +147,24 @@ object Database {
             )
         }
 
-        suspend fun messagesToday(channel: String, hours: Int) =
+        suspend fun messageCount(channel: String, hours: Int) =
             collection.countDocuments(and(
                 MessageEntry::channel eq channel.asChannelName,
                 MessageEntry::date gt (now - (hours * 3_600_000))
             ))
 
-        suspend fun messagesTodayByUser(channel: String, username: String, hours: Int) =
+        suspend fun messageCountByUser(channel: String, username: String, hours: Int) =
             collection.countDocuments(and(
                 MessageEntry::channel eq channel.asChannelName,
                 MessageEntry::username eq username.toLowerCase(),
                 MessageEntry::date gt (now - (hours * 3_600_000))
             ))
+
+        suspend fun messagesIn(channel: String, hours: Int) =
+            collection.find(and(
+                MessageEntry::channel eq channel.asChannelName,
+                MessageEntry::date gt (now - (hours * 3_600_000))
+            )).toList()
     }
 }
 
