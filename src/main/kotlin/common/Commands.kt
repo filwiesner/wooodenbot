@@ -189,11 +189,12 @@ fun MainScope.commonCommands() {
                 .distinct()
                 .associateWith { word -> words.count { it == word } }
                 .entries
+                .filter { it.key.length > 3 }
                 .sortedByDescending { it.value }
                 .take(3)
-                .joinToString { "'${it.key}' : ${it.key}" }
+                .joinToString { "'${it.key}' (${it.value})" }
 
-            sendMessage("Top three words in past $hours hours are: $top3")
+            sendMessage("Top three words in past $hours hours are $top3")
         }
     }
 }
