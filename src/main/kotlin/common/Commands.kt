@@ -68,7 +68,7 @@ fun MainScope.commonCommands() {
 
             sendMessage(
                 if (username != null) {
-                    val byUser = Database.Message.messageCountByUser(channel, message.username, hours)
+                    val byUser = Database.Message.messageCountByUser(channel, username!!, hours)
                     val total = Database.Message.messageCount(channel, hours)
                     val percentage = String.format("%.1f", (byUser.toDouble() / (total.toDouble() / 100)))
                     "$username has written $byUser messages in last $hours hours ($percentage% of total messages)"
