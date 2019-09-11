@@ -63,13 +63,16 @@ fun MainScope.commonCommands() {
                         username = it
                         null
                     }
-                } else it
+                } else null
             } ?: 24
 
             sendMessage(
-                if (username != null)
-                    "$username has written ${Database.Message.messageCountByUser(channel, message.username, hours)} messages in last $hours hours"
-                else
+                if (username != null) {
+                    val byUser = Database.Message.messageCountByUser(channel, message.username, hours)
+                    val total = Database.Message.messageCount(channel, hours)
+                    val percentage = byUser.toDouble() / (total.toDouble() / 100)
+                    "$username has written $byUser messages in last $hours hours ($percentage% of total messages)"
+                } else
                     "${Database.Message.messageCount(channel, hours)} messages were written in this channel in last $hours hours"
             )
         }
