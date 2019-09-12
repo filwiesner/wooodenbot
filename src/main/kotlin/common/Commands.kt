@@ -113,7 +113,11 @@ fun MainScope.commonCommands() {
                     if (name != null) {
                         Database.Quotes.get(channel, user, name)?.toString()
                             ?: "I could not find $name by $user"
-                    } else Database.Quotes.quoteList(channel, user).random().toString()
+                    } else Database.Quotes.quoteList(channel, user).toList()
+                        .let {
+                            if (it.isEmpty()) "There are no quotes from user $user"
+                            else it.random().toString()
+                        }
                 )
             }
 
