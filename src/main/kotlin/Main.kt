@@ -1,4 +1,5 @@
 import channels.kaito.kaito
+import channels.santa.santa
 import channels.sumkat.sumkat
 import channels.wooodenleg.wooodenleg
 import com.ktmi.tmi.commands.join
@@ -29,6 +30,7 @@ fun main() {
         channel("wooodenleg") { wooodenleg() }
         channel("sumkat") { sumkat() }
         channel("pkmntrainerkaito") { kaito() }
+        channel("sgtsanta95") { santa() }
 
         onTwitchMessage<UndefinedMessage> {
             println("Message not recognized: ${it.rawMessage}")

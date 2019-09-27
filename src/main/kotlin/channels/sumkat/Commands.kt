@@ -3,11 +3,15 @@ package channels.sumkat
 import clapCommand
 import com.ktmi.tmi.dsl.builder.TwitchScope
 import commandMark
+import cookieCommand
+import goodnightCommand
 import helpers.commands
 import helpers.displayName
 import helpers.isMod
 import helpers.isSubscriber
 import hugCommand
+import sadCommand
+import slapCommand
 import unoCommand
 import kotlin.random.Random
 
@@ -17,6 +21,10 @@ fun TwitchScope.sumkatCommands() {
         hugCommand()
         clapCommand()
         unoCommand()
+        slapCommand()
+        sadCommand()
+        goodnightCommand()
+        cookieCommand()
 
         "commands" receive {
             sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels, poll \" CoolStoryBob")
@@ -27,21 +35,6 @@ fun TwitchScope.sumkatCommands() {
                 val target = parameters["target"] ?: displayName
                 sendMessage("(･ω･)つ GivePLZ $target TakeNRG ⊂(･ω･)")
             } else sendMessage("This command is for subscribers only")
-        }
-
-        "slap [target]" receive { parameters ->
-            val target = parameters["target"]
-            sendMessage("${target ?: "Hey"}, stop being toxic! \uD83D\uDC4A KAPOW")
-        }
-
-        "sad [target]" receive { parameters ->
-            val target = parameters["target"] ?: displayName
-            sendMessage("DepressoEspresso${target?.capitalize()}")
-        }
-
-        "gn [target]" receive { parameters ->
-            val target = parameters["target"] ?: displayName
-            sendMessage("Good night $target GivePLZ \uD83D\uDC9B")
         }
 
         "|srqueue,sq|" receive {
@@ -75,8 +68,6 @@ fun TwitchScope.sumkatCommands() {
             else
                 sendMessage("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
         }
-
-        "cookie" receive { sendMessage("GivePLZ \uD83C\uDF6A") }
     }
 }
 

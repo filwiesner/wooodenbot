@@ -24,3 +24,28 @@ fun CommandScope.unoCommand() {
             sendMessage("@$target $displayName uses reverse UNO card on you")
     }
 }
+
+fun CommandScope.slapCommand() {
+    "slap [target]" receive { parameters ->
+        val target = parameters["target"]
+        sendMessage("${target ?: "Hey"}, stop being toxic! \uD83D\uDC4A KAPOW")
+    }
+}
+
+fun CommandScope.sadCommand() {
+    "sad [target]" receive { parameters ->
+        val target = parameters["target"] ?: displayName
+        sendMessage("DepressoEspresso${target?.capitalize()}")
+    }
+}
+
+fun CommandScope.goodnightCommand() {
+    "gn [target]" receive { parameters ->
+        val target = parameters["target"] ?: displayName
+        sendMessage("Good night $target GivePLZ \uD83D\uDC9B")
+    }
+}
+
+fun CommandScope.cookieCommand() {
+    "cookie" receive { sendMessage("GivePLZ \uD83C\uDF6A") }
+}
