@@ -6,6 +6,7 @@ import commandMark
 import helpers.commands
 import hugCommand
 import unoCommand
+import foodCommand
 
 fun TwitchScope.kaitoCommands() {
 
@@ -13,5 +14,6 @@ fun TwitchScope.kaitoCommands() {
         hugCommand()
         clapCommand()
         unoCommand()
+        foodCommand()
     }
 }

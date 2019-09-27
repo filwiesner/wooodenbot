@@ -49,3 +49,7 @@ fun CommandScope.goodnightCommand() {
 fun CommandScope.cookieCommand() {
     "cookie" receive { sendMessage("GivePLZ \uD83C\uDF6A") }
 }
+
+fun CommandScope.foodCommand() {
+    "food" receive { sendMessage("If you are so hungry, go get some food! \uD83D\uDC40") }
+}
