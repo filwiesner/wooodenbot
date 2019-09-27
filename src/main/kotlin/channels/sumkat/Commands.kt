@@ -75,6 +75,8 @@ fun TwitchScope.sumkatCommands() {
             else
                 sendMessage("$username ${feels[index]} \uD83D\uDC9B TakeNRG [$index]")
         }
+
+        "cookie" receive { sendMessage("GivePLZ \uD83C\uDF6A") }
     }
 }
 
