@@ -10,6 +10,7 @@ import hugCommand
 import sadCommand
 import slapCommand
 import unoCommand
+import foodCommand
 
 fun TwitchScope.santaCommands() {
 
@@ -21,9 +22,10 @@ fun TwitchScope.santaCommands() {
         sadCommand()
         goodnightCommand()
         cookieCommand()
+        foodCommand()
 
         "commands" receive {
-            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, clap, slap, uno, sad, howlong, gn, poll \" CoolStoryBob")
+            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, clap, slap, uno, sad, howlong, gn, poll, food \" CoolStoryBob")
         }
     }
 }

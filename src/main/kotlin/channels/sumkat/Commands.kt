@@ -13,6 +13,7 @@ import hugCommand
 import sadCommand
 import slapCommand
 import unoCommand
+import foodCommand
 import kotlin.random.Random
 
 fun TwitchScope.sumkatCommands() {
@@ -25,9 +26,10 @@ fun TwitchScope.sumkatCommands() {
         sadCommand()
         goodnightCommand()
         cookieCommand()
+        foodCommand()
 
         "commands" receive {
-            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels, poll \" CoolStoryBob")
+            sendMessage("You can call me using following commands: \"hello, whoareyou, details, hug, ulthug, clap, slap, uno, sad, howlong, gn, srqueue, plug, hehe, cheerup, feels, poll, food \" CoolStoryBob")
         }
 
         "ulthug [target]" receive { parameters ->
