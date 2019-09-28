@@ -1,13 +1,13 @@
 package common
 
 import com.ktmi.tmi.dsl.builder.scopes.MainScope
+import com.ktmi.tmi.dsl.builder.scopes.commands
+import com.ktmi.tmi.events.isSubscriber
 import com.ktmi.tmi.events.onMessage
 import com.ktmi.tmi.messages.TextMessage
 import commandMark
 import database.Database
 import database.now
-import helpers.commands
-import helpers.isSubscriber
 import kotlinx.coroutines.delay
 
 private val lastMessages = mutableMapOf<String, String>()

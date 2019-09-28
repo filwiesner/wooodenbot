@@ -2,8 +2,8 @@ package channels.kaito
 
 import clapCommand
 import com.ktmi.tmi.dsl.builder.TwitchScope
+import com.ktmi.tmi.dsl.builder.scopes.commands
 import commandMark
-import helpers.commands
 import hugCommand
 import unoCommand
 import foodCommand

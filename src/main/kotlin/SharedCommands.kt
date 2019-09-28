@@ -1,5 +1,5 @@
-import helpers.CommandScope
-import helpers.displayName
+import com.ktmi.tmi.dsl.builder.scopes.CommandScope
+import com.ktmi.tmi.events.displayName
 
 fun CommandScope.hugCommand() {
     "hug [target]" receive { parameters ->

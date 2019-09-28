@@ -2,10 +2,10 @@ package channels.santa
 
 import clapCommand
 import com.ktmi.tmi.dsl.builder.TwitchScope
+import com.ktmi.tmi.dsl.builder.scopes.commands
 import commandMark
 import cookieCommand
 import goodnightCommand
-import helpers.commands
 import hugCommand
 import sadCommand
 import slapCommand

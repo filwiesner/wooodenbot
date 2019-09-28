@@ -2,13 +2,13 @@ package channels.sumkat
 
 import clapCommand
 import com.ktmi.tmi.dsl.builder.TwitchScope
+import com.ktmi.tmi.dsl.builder.scopes.commands
+import com.ktmi.tmi.events.displayName
+import com.ktmi.tmi.events.isMod
+import com.ktmi.tmi.events.isSubscriber
 import commandMark
 import cookieCommand
 import goodnightCommand
-import helpers.commands
-import helpers.displayName
-import helpers.isMod
-import helpers.isSubscriber
 import hugCommand
 import sadCommand
 import slapCommand
