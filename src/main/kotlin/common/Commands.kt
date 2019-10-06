@@ -197,7 +197,7 @@ fun MainScope.commonCommands() {
                 .distinct()
                 .associateWith { word -> words.count { it == word } }
                 .entries
-                .filter { it.key.length > 3 || !blacklist.contains(it.key) }
+                .filter { it.key.length > 3 && !blacklist.contains(it.key) }
                 .sortedByDescending { it.value }
                 .take(3)
                 .joinToString { "'${it.key}' (${it.value})" }
