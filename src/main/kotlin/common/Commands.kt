@@ -8,6 +8,7 @@ import com.ktmi.tmi.messages.TextMessage
 import commandMark
 import database.Database
 import database.now
+import helpers.defIgnoredUser
 import kotlinx.coroutines.delay
 
 private val lastMessages = mutableMapOf<String, String>()
@@ -190,14 +191,14 @@ fun MainScope.commonCommands() {
             val hours = parameters["hours"]?.toIntOrNull() ?: 24
             val words = Database.Message
                 .messagesIn(channel, hours)
+                .filter { !defIgnoredUser.contains(it.username) }
                 .flatMap { it.message.split(' ') }
-            val blacklist = arrayOf("added", "queue", "(playing", "mins")
 
             val top3 = words.asSequence()
                 .distinct()
                 .associateWith { word -> words.count { it == word } }
                 .entries
-                .filter { it.key.length > 3 && !blacklist.contains(it.key) }
+                .filter { it.key.length > 3 }
                 .sortedByDescending { it.value }
                 .take(3)
                 .joinToString { "'${it.key}' (${it.value})" }
