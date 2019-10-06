@@ -186,17 +186,18 @@ fun MainScope.commonCommands() {
             } else sendMessage("No poll is active right now")
         }
 
-        "words [hours]" receive {
-            val hours = it["hours"]?.toIntOrNull() ?: 24
+        "words [hours]" receive { parameters ->
+            val hours = parameters["hours"]?.toIntOrNull() ?: 24
             val words = Database.Message
                 .messagesIn(channel, hours)
                 .flatMap { it.message.split(' ') }
+            val blacklist = arrayOf("added", "queue", "(playing", "mins")
 
-            val top3 = words
+            val top3 = words.asSequence()
                 .distinct()
                 .associateWith { word -> words.count { it == word } }
                 .entries
-                .filter { it.key.length > 3 }
+                .filter { it.key.length > 3 || !blacklist.contains(it.key) }
                 .sortedByDescending { it.value }
                 .take(3)
                 .joinToString { "'${it.key}' (${it.value})" }
