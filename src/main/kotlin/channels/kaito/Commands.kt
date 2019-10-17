@@ -21,7 +21,7 @@ fun TwitchScope.kaitoCommands() {
         goodnightCommand()
 
         "commands" receive {
-            sendMessage("You can call me using following commands: \"hug, clap, uno, sad, gn, food, treat \" CoolStoryBob")
+            sendMessage("You can call me using following commands: \"hug, clap, uno, sad, gn, food, treat, crusade \" CoolStoryBob")
         }
 
         "treat {value}" receive { parameters ->
@@ -30,11 +30,10 @@ fun TwitchScope.kaitoCommands() {
                 "dog" -> sendMessage("My Dogs will now get a treat! \uD83D\uDC40")
                 else -> sendMessage("I don't have a $treat \uD83D\uDC40")
             }
-
-            "crusade [target]" receive { parameters ->
-                val target = parameters["target"] ?: displayName
-                sendMessage("We shall start a crusade against $target !")
-         }
+        }
+        "crusade [target]" receive { parameters ->
+            val target = parameters["target"] ?: displayName
+            sendMessage("We shall start a crusade against $target !")
         }
     }
 }
