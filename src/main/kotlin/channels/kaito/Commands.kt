@@ -27,7 +27,9 @@ fun TwitchScope.kaitoCommands() {
         "treat {value}" receive { parameters ->
             when(val treat = parameters.getValue("value").toLowerCase()) {
                 "cat" -> sendMessage("Tinkerbell will now get a treat! \uD83D\uDC40")
+                "cats" -> sendMessage("Tinkerbell will now get a treat! \uD83D\uDC40")
                 "dog" -> sendMessage("My Dogs will now get a treat! \uD83D\uDC40")
+                "dogs" -> sendMessage("My Dogs will now get a treat! \uD83D\uDC40")
                 else -> sendMessage("I don't have a $treat \uD83D\uDC40")
             }
         }
