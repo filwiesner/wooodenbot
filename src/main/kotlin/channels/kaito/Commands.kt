@@ -37,5 +37,10 @@ fun TwitchScope.kaitoCommands() {
             val target = parameters["target"] ?: displayName
             sendMessage("We shall start a crusade against $target !")
         }
+
+        "shoe [shoo]" receive { parameters ->
+            val shoo = parameters["shoo"] ?: displayName
+            sendMessage("$shoo \uD83D\uDC49 \uD83D\uDEAA")
+        }
     }
 }
