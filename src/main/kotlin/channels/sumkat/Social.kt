@@ -6,6 +6,7 @@ import com.ktmi.tmi.events.displayName
 import com.ktmi.tmi.events.onBitsBadgeTier
 import com.ktmi.tmi.events.onMessage
 import helpers.textMessage
+import kotlinx.coroutines.delay
 
 const val qweartyId = 101010482
 fun ChannelContextScope.sumkatSocial() {
@@ -13,9 +14,11 @@ fun ChannelContextScope.sumkatSocial() {
     commands('!') {
         "sr <song>" receive {
             if (message.userId == qweartyId) {
-                sendMessage("!removesong $displayName")
                 timeout(60)
                 whisper("You are not allowed to request songs, ma dude")
+
+                delay(1000) // Wait a second so StreamElements has chance to catch up
+                sendMessage("!removesong $displayName")
             }
         }
     }
