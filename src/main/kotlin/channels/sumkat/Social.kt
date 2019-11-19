@@ -1,11 +1,24 @@
 package channels.sumkat
 
 import com.ktmi.tmi.dsl.builder.ChannelContextScope
+import com.ktmi.tmi.dsl.builder.scopes.commands
+import com.ktmi.tmi.events.displayName
 import com.ktmi.tmi.events.onBitsBadgeTier
 import com.ktmi.tmi.events.onMessage
 import helpers.textMessage
 
+const val qweartyId = 101010482
 fun ChannelContextScope.sumkatSocial() {
+
+    commands('!') {
+        "sr <song>" receive {
+            if (message.userId == qweartyId) {
+                sendMessage("!removesong $displayName")
+                timeout(60)
+                whisper("You are not allowed to request songs, ma dude")
+            }
+        }
+    }
 
     onMessage { when {
         (!message.hasUwUPermit()) && uwuList.any { text.toLowerCase().contains(it) } ->
