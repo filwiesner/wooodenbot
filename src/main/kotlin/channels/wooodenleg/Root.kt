@@ -31,8 +31,8 @@ fun ChannelScope.wooodenleg() {
             }
 
             "changename {original} {new}" receive {
-                val origName = it.getValue("original")
-                val newName = it.getValue("new")
+                val origName = it.getValue("original").asChannelName
+                val newName = it.getValue("new").asChannelName
 
                 if (Database.Channels.get().contains("#$origName")) {
                     Database.Channels.renameChannel(origName, newName)
