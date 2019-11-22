@@ -9,6 +9,9 @@ import com.ktmi.tmi.messages.asChannelName
 import com.ktmi.tmi.messages.channelAsUsername
 import commandMark
 import database.Database
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 fun ChannelScope.wooodenleg() {
 
@@ -34,16 +37,20 @@ fun ChannelScope.wooodenleg() {
                 val origName = it.getValue("original").asChannelName
                 val newName = it.getValue("new").asChannelName
 
-                if (Database.Channels.get().contains("#$origName")) {
-                    Database.Channels.renameChannel(origName, newName)
-                    Database.LastSeen.renameChannel(origName, newName)
-                    Database.Quotes.renameChannel(origName, newName)
-                    Database.Message.renameChannel(origName, newName)
+                if (Database.Channels.get().contains(origName)) {
+                    sendMessage("Sure thing but it make take a while")
+                    val length = measureTimeMillis {
+                        Database.Channels.renameChannel(origName, newName)
+                        Database.LastSeen.renameChannel(origName, newName)
+                        Database.Quotes.renameChannel(origName, newName)
+                        Database.Message.renameChannel(origName, newName)
 
-                    leave(origName)
-                    join(newName)
-                    sendMessage("Done CorgiDerp")
-                } else sendMessage("No channel with name $origName")
+                        leave(origName)
+                        join(newName)
+                    }
+
+                    sendMessage("Done CorgiDerp It took only ${length / 1000} seconds")
+                } else sendMessage("No channel with name ${origName.channelAsUsername}")
             }
         }
     }
