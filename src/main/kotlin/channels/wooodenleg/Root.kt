@@ -29,6 +29,22 @@ fun ChannelScope.wooodenleg() {
                 leave(channel)
                 sendMessage("Left channel ${channel.channelAsUsername}")
             }
+
+            "changename {original} {new}" receive {
+                val origName = it.getValue("original")
+                val newName = it.getValue("new")
+
+                if (Database.Channels.get().contains(origName)) {
+                    Database.Channels.renameChannel(origName, newName)
+                    Database.LastSeen.renameChannel(origName, newName)
+                    Database.Quotes.renameChannel(origName, newName)
+                    Database.Message.renameChannel(origName, newName)
+
+                    leave(origName)
+                    join(newName)
+                    sendMessage("Done CorgiDerp")
+                } else sendMessage("No channel with name $origName")
+            }
         }
     }
 }

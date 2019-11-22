@@ -31,7 +31,7 @@ fun main() {
         channel("wooodenleg") { wooodenleg() }
         channel("sumkat") { sumkat() }
         channel("pkmntrainerkaito") { kaito() }
-        channel("sgtsanta95") { santa() }
+        channel("sgtsantatv") { santa() }
         channel("qwearty11") { qwearty() }
 
         onTwitchMessage<UndefinedMessage> {
