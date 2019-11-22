@@ -38,7 +38,7 @@ fun ChannelScope.wooodenleg() {
                 val newName = it.getValue("new").asChannelName
 
                 if (Database.Channels.get().contains(origName)) {
-                    sendMessage("Sure thing but it make take a while")
+                    sendMessage("Sure thing but it may take a while")
                     val length = measureTimeMillis {
                         Database.Channels.renameChannel(origName, newName)
                         Database.LastSeen.renameChannel(origName, newName)
