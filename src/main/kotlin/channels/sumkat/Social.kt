@@ -11,17 +11,17 @@ import kotlinx.coroutines.delay
 const val qweartyId = 101010482
 fun ChannelContextScope.sumkatSocial() {
 
-    commands('!') {
-        "sr <song>" receive {
-            if (message.userId == qweartyId) {
-                timeout(60)
-                whisper("You are not allowed to request songs, ma dude")
-
-                delay(1000) // Wait a second so StreamElements has chance to catch up
-                sendMessage("!removesong $displayName")
-            }
-        }
-    }
+//    commands('!') {
+//        "sr <song>" receive {
+//            if (message.userId == qweartyId) {
+//                timeout(60)
+//                whisper("You are not allowed to request songs, ma dude")
+//
+//                delay(1000) // Wait a second so StreamElements has chance to catch up
+//                sendMessage("!removesong $displayName")
+//            }
+//        }
+//    }
 
     onMessage { when {
         (!message.hasUwUPermit()) && uwuList.any { text.toLowerCase().contains(it) } ->
