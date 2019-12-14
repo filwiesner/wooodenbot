@@ -1,12 +1,9 @@
 package channels.sumkat
 
 import com.ktmi.tmi.dsl.builder.ChannelContextScope
-import com.ktmi.tmi.dsl.builder.scopes.commands
-import com.ktmi.tmi.events.displayName
 import com.ktmi.tmi.events.onBitsBadgeTier
 import com.ktmi.tmi.events.onMessage
 import helpers.textMessage
-import kotlinx.coroutines.delay
 
 const val qweartyId = 101010482
 fun ChannelContextScope.sumkatSocial() {

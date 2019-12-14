@@ -3,6 +3,7 @@ package common
 import ThrottleOut
 import com.ktmi.tmi.dsl.builder.container
 import com.ktmi.tmi.dsl.builder.scopes.MainScope
+import com.ktmi.tmi.events.onMessage
 import commandMark
 import helpers.textMessage
 
@@ -24,13 +25,14 @@ fun MainScope.commonSocial() {
         }
 
         containing("what is love") { it.reply("baby don't hurt me") }
+    }
 
-        container {
-            + ThrottleOut(10_000)
+    container {
+        + ThrottleOut(10_000)
 
-            textMessage {
-                isJust("F") { it.reply("F") }
-            }
+        onMessage {
+            if (text.toLowerCase() == "f")
+                sendMessage("F")
         }
     }
 }
