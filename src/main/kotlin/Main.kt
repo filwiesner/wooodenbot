@@ -20,7 +20,7 @@ fun main() {
 
     tmi(token) {
         + Reconnect()
-        + Greet(customMessages = knownUsers)
+        + Greet(customMessages = knownUsers, ignoreKnownUsersInChannels = arrayOf("sgtsantatv"))
 
         onRoomState { println("Joined $channel") }
         onConnectionState { println(it) }

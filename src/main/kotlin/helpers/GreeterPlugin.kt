@@ -5,6 +5,7 @@ import com.ktmi.tmi.dsl.builder.Container
 import com.ktmi.tmi.dsl.plugins.TwitchPlugin
 import com.ktmi.tmi.events.onTwitchMessage
 import com.ktmi.tmi.messages.TextMessage
+import com.ktmi.tmi.messages.channelAsUsername
 import database.Database
 import database.now
 import kotlinx.coroutines.GlobalScope
@@ -17,7 +18,8 @@ fun Container.Greet(
     hours: Int = 48,
     customMessages: Map<String, String> = mapOf(),
     greetings: Array<String> = defGreetings,
-    ignored: Array<String> = defIgnoredUser
+    ignored: Array<String> = defIgnoredUser,
+    ignoreKnownUsersInChannels: Array<String> = emptyArray()
 ) = object : TwitchPlugin {
     override val name = "greet"
 
@@ -44,6 +46,9 @@ fun Container.Greet(
     }
 
     fun seen(message: TextMessage, lastSeen: database.LastSeenEntry) {
+        if (ignoreKnownUsersInChannels.contains(message.channel.channelAsUsername))
+            return
+
         val diff = ((now - lastSeen.timestamp) / 3_600_000).toInt()
 
         if (diff >= hours) {
