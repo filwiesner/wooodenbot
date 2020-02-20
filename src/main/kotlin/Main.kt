@@ -5,22 +5,18 @@ import channels.sumkat.sumkat
 import channels.wooodenleg.wooodenleg
 import com.ktmi.tmi.commands.join
 import com.ktmi.tmi.dsl.builder.scopes.MainScope
-import com.ktmi.tmi.dsl.builder.scopes.channel
 import com.ktmi.tmi.dsl.builder.scopes.tmi
 import com.ktmi.tmi.dsl.plugins.Reconnect
 import com.ktmi.tmi.events.*
 import com.ktmi.tmi.messages.UndefinedMessage
 import common.commonLogic
 import database.Database
-import helpers.Greet
-
 fun main() {
     Database.toString() // To wake the DB object
     val token = System.getenv("OAUTH")
 
     tmi(token) {
         + Reconnect()
-        + Greet(customMessages = knownUsers, ignoreKnownUsersInChannels = arrayOf("sgtsantatv"))
 
         onRoomState { println("Joined $channel") }
         onConnectionState { println(it) }
@@ -28,11 +24,12 @@ fun main() {
         onMessage { Database.Message.onMessage(message) }
 
         commonLogic()
-        channel("wooodenleg") { wooodenleg() }
-        channel("sumkat") { sumkat() }
-        channel("pkmntrainerkaito") { kaito() }
-        channel("sgtsantatv") { santa() }
-        channel("qwearty11") { qwearty() }
+
+        // Channels
+        wooodenleg()
+        sumkat()
+        kaito()
+        santa()
 
         onTwitchMessage<UndefinedMessage> {
             println("Message not recognized: ${it.rawMessage}")

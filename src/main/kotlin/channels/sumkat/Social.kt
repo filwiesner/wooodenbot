@@ -1,12 +1,15 @@
 package channels.sumkat
 
 import com.ktmi.tmi.dsl.builder.ChannelContextScope
+import com.ktmi.tmi.dsl.builder.GlobalContextScope
+import com.ktmi.tmi.dsl.builder.TwitchScope
 import com.ktmi.tmi.events.onBitsBadgeTier
 import com.ktmi.tmi.events.onMessage
+import database.Database.Message.onMessage
 import helpers.textMessage
 
 const val qweartyId = 101010482
-fun ChannelContextScope.sumkatSocial() {
+fun GlobalContextScope.sumkatSocial() {
 
 //    commands('!') {
 //        "sr <song>" receive {
