@@ -2,6 +2,7 @@ package channels.wooodenleg
 
 import com.ktmi.tmi.commands.join
 import com.ktmi.tmi.commands.leave
+import com.ktmi.tmi.dsl.builder.GlobalContextScope
 import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
 import com.ktmi.tmi.dsl.builder.scopes.broadcaster
 import com.ktmi.tmi.dsl.builder.scopes.commands
@@ -11,7 +12,7 @@ import commandMark
 import database.Database
 import kotlin.system.measureTimeMillis
 
-fun ChannelScope.wooodenlegAdministration() {
+fun GlobalContextScope.wooodenlegAdministration() {
     broadcaster {
 
         commands(commandMark) {
