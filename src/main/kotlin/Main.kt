@@ -11,6 +11,9 @@ import com.ktmi.tmi.events.*
 import com.ktmi.tmi.messages.UndefinedMessage
 import common.commonLogic
 import database.Database
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+
 fun main() {
     Database.toString() // To wake the DB object
     val token = System.getenv("OAUTH")
