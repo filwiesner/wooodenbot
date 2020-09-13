@@ -5,7 +5,7 @@ val knownUsers = mapOf(
     "wooodenleg"         to "Master wooodenleg is here BlessRNG ",
     "riekanka"           to "Eeeeeeee, riekanka is here GivePLZ \uD83D\uDC9B",
     "bossbear"           to "Hello boss KonCha ",
-    "pkmntrainerkaito"   to "Welcome Mr. Weeb!",
+    "sumkaito"           to "Welcome Mr. Weeb!",
     "scare_less"         to "Scarlett is here! GivePLZ",
     "smolsasa"           to "Greetings knife queen, how was your day?",
     "smrtka314cz"        to "Hello Smrtka! Can I go to your wedding?",

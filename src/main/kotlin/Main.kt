@@ -29,7 +29,7 @@ fun main() {
         commonLogic()
         channel("wooodenleg") { wooodenleg() }
         channel("sumkat") { sumkat() }
-        channel("pkmntrainerkaito") { kaito() }
+        channel("sumkaito") { kaito() }
         channel("sgtsanta95") { santa() }
 
         onTwitchMessage<UndefinedMessage> {
