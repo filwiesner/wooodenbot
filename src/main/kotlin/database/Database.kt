@@ -40,6 +40,13 @@ object Database {
             val res = collection.deleteOne(ChannelEntry::channelName eq name)
             return res.deletedCount > 0
         }
+
+        suspend fun renameChannel(oldChannel: String, newChannel: String) {
+            collection.updateOne(
+                ChannelEntry::channelName eq oldChannel,
+                setValue(ChannelEntry::channelName, newChannel)
+            )
+        }
     }
 
     object LastSeen {
@@ -61,6 +68,13 @@ object Database {
                 setValue(LastSeenEntry::timestamp, now)
             )
         }
+
+        suspend fun renameChannel(oldChannel: String, newChannel: String) {
+            collection.updateMany(
+                LastSeenEntry::channel eq oldChannel,
+                setValue(LastSeenEntry::channel, newChannel)
+            )
+        }
     }
 
     object Quotes {
@@ -70,7 +84,7 @@ object Database {
             val nameExists = collection.findOne(and(
                 QuoteEntry::channel eq channel,
                 QuoteEntry::username eq username,
-                QuoteEntry:: name eq name
+                QuoteEntry::name eq name
             )) != null
             if (nameExists) return false
 
@@ -83,7 +97,7 @@ object Database {
             collection.findOne(and(
                 QuoteEntry::channel eq channel,
                 QuoteEntry::username eq username,
-                QuoteEntry:: name eq name
+                QuoteEntry::name eq name
             ))
 
         suspend fun quoteList(channel: String, username: String) =
@@ -96,8 +110,15 @@ object Database {
             collection.deleteOne(and(
                 QuoteEntry::channel eq channel,
                 QuoteEntry::username eq username,
-                QuoteEntry:: name eq name
+                QuoteEntry::name eq name
             )).deletedCount > 0
+
+        suspend fun renameChannel(oldChannel: String, newChannel: String) {
+            collection.updateMany(
+                QuoteEntry::channel eq oldChannel,
+                setValue(QuoteEntry::channel, newChannel)
+            )
+        }
     }
 
     object Poll {
@@ -165,6 +186,13 @@ object Database {
                 MessageEntry::channel eq channel.asChannelName,
                 MessageEntry::date gt (now - (hours * 3_600_000))
             )).toList()
+
+        suspend fun renameChannel(oldChannel: String, newChannel: String) {
+            collection.updateMany(
+                MessageEntry::channel eq oldChannel,
+                setValue(MessageEntry::channel, newChannel)
+            )
+        }
     }
 }
 

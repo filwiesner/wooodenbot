@@ -1,34 +1,17 @@
 package channels.wooodenleg
 
-import com.ktmi.tmi.commands.join
-import com.ktmi.tmi.commands.leave
-import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
-import com.ktmi.tmi.dsl.builder.scopes.broadcaster
-import com.ktmi.tmi.dsl.builder.scopes.commands
-import com.ktmi.tmi.messages.asChannelName
-import com.ktmi.tmi.messages.channelAsUsername
-import commandMark
-import database.Database
+import com.ktmi.tmi.dsl.builder.GlobalContextScope
+import com.ktmi.tmi.dsl.builder.container
+import com.ktmi.tmi.dsl.builder.scopes.channel
+import helpers.Greet
+import knownUsers
 
-fun ChannelScope.wooodenleg() {
+fun GlobalContextScope.wooodenleg() = channel("wooodenleg") {
+    container {
+        + Greet(customMessages = knownUsers)
 
-    broadcaster {
-
-        commands(commandMark) {
-
-            "join {channel}" receive {
-                val channel = it.getValue("channel").asChannelName
-                Database.Channels.add(channel)
-                join(channel)
-                sendMessage("Joined channel ${channel.channelAsUsername}")
-            }
-
-            "leave {channel}" receive {
-                val channel = it.getValue("channel").asChannelName
-                Database.Channels.remove(channel)
-                leave(channel)
-                sendMessage("Left channel ${channel.channelAsUsername}")
-            }
-        }
+        wooodenlegAdministration()
+        wooodenlegCommands()
+        wooodenlegSocial()
     }
 }

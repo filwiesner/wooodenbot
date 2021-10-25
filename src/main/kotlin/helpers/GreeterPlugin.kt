@@ -3,9 +3,12 @@ package helpers
 import com.ktmi.tmi.commands.sendMessage
 import com.ktmi.tmi.dsl.builder.Container
 import com.ktmi.tmi.dsl.plugins.TwitchPlugin
+import com.ktmi.tmi.events.UserContext
 import com.ktmi.tmi.events.onTwitchMessage
 import com.ktmi.tmi.messages.TextMessage
+import com.ktmi.tmi.messages.channelAsUsername
 import database.Database
+import database.LastSeenEntry
 import database.now
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -17,7 +20,8 @@ fun Container.Greet(
     hours: Int = 48,
     customMessages: Map<String, String> = mapOf(),
     greetings: Array<String> = defGreetings,
-    ignored: Array<String> = defIgnoredUser
+    ignored: Array<String> = defIgnoredUser,
+    ignoreKnownUsersInChannels: Array<String> = emptyArray()
 ) = object : TwitchPlugin {
     override val name = "greet"
 
@@ -43,7 +47,10 @@ fun Container.Greet(
         sendMessage(message.channel, "I've never seen you before ${message.displayName} TakeNRG Welcome!")
     }
 
-    fun seen(message: TextMessage, lastSeen: database.LastSeenEntry) {
+    fun seen(message: TextMessage, lastSeen: LastSeenEntry) {
+        if (ignoreKnownUsersInChannels.contains(message.channel.channelAsUsername))
+            return
+
         val diff = ((now - lastSeen.timestamp) / 3_600_000).toInt()
 
         if (diff >= hours) {
@@ -56,4 +63,33 @@ fun Container.Greet(
             }
         }
     }
+}
+
+fun Container.Greet(
+    ignored: Array<String> = defIgnoredUser,
+    onUser: UserContext<TextMessage>.(lastSeenHours: Int?)->Unit
+) = object : TwitchPlugin {
+    override val name: String
+        get() = "greet"
+
+    init { launch {
+        onTwitchMessage<TextMessage> { message ->
+            if (!ignored.contains(message.username)) GlobalScope.launch {
+                try {
+                    val seen = Database.LastSeen.get(message.channel, message.username)
+                    val diff = if (seen != null)
+                        ((now - seen.timestamp) / 3_600_000).toInt()
+                    else null
+
+                    UserContext(message, message.username, message.channel)
+                        .onUser(diff)
+
+                    if (seen == null) Database.LastSeen
+                        .set(message.channel, message.username)
+                    else Database.LastSeen
+                        .update(message.channel, message.username)
+                } catch (t: Throwable) { t.printStackTrace() }
+            }
+        }
+    } }
 }

@@ -1,7 +1,15 @@
 package channels.kaito
 
-import com.ktmi.tmi.dsl.builder.scopes.ChannelScope
+import com.ktmi.tmi.dsl.builder.GlobalContextScope
+import com.ktmi.tmi.dsl.builder.container
+import com.ktmi.tmi.dsl.builder.scopes.channel
+import helpers.Greet
+import knownUsers
 
-fun ChannelScope.kaito() {
-    kaitoCommands()
+fun GlobalContextScope.kaito() = channel("pkmntrainerkaito") {
+    container {
+        + Greet(customMessages = knownUsers)
+
+        kaitoCommands()
+    }
 }
