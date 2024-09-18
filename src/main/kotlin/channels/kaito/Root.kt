@@ -13,3 +13,5 @@ fun GlobalContextScope.kaito() = channel("sumkaito") {
         kaitoCommands()
     }
 }
+
+"Does this fucker still work?"
